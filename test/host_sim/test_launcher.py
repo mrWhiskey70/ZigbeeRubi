@@ -19,3 +19,19 @@ class Launcher(unittest.TestCase):
     self.assertEqual(record.read_text(),info['url'])
    finally:
     p.terminate();p.wait(timeout=5);p.stdout.close();p.stderr.close()
+
+class StaticAssets(unittest.TestCase):
+ def test_module_mime_ignores_system_mapping(self):
+  with tempfile.TemporaryDirectory() as temp:
+   d=Path(temp);assets=d/'assets';assets.mkdir()
+   (assets/'app.js').write_text('export const ready = true;')
+   script='import sys, mimetypes; sys.path.insert(0, '+repr(str(ROOT/'host'))+'); mimetypes.init(); mimetypes.add_type("text/plain", ".js"); import server; server.main()'
+   p=subprocess.Popen([sys.executable,'-c',script,'--port','0','--data-dir',str(d/'data'),'--assets',str(assets)],stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
+   try:
+    line=p.stdout.readline();self.assertTrue(line, p.stderr.read() if p.poll() is not None else 'server did not announce its URL')
+    info=json.loads(line)
+    with urllib.request.urlopen(info['url']+'/app.js',timeout=5) as response:
+     self.assertEqual(response.headers.get_content_type(),'text/javascript')
+     self.assertEqual(response.read(),b'export const ready = true;')
+   finally:
+    p.terminate();p.wait(timeout=5);p.stdout.close();p.stderr.close()

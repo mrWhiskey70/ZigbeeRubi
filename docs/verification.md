@@ -7,7 +7,7 @@
 | Upstream и endpoint-команды | `cmake -S test/host -B build-host; cmake --build build-host; ctest --test-dir build-host --output-on-failure` | 74/74 |
 | HTTP/static/server интеграция upstream | `cmake -S test/integration -B build-integration; cmake --build build-integration; ctest --test-dir build-integration --output-on-failure` | 7/7 |
 | Переносимый движок и target-mode общий API | `cmake -S host -B build-simulator; cmake --build build-simulator; ctest --test-dir build-simulator --output-on-failure` | 14/14 |
-| HTTP API / сохранение / таймеры | `python3 -m unittest discover -s test/host_sim -v` | 12/12 |
+| HTTP API / сохранение / таймеры | `python3 -m unittest discover -s test/host_sim -v` | 13/13 |
 | JS редактор и безопасное отображение | `npm ci; npm test` | 3/3 |
 | Браузер / мобильный экран / закрытая страница | `python3 test/ui/ui_smoke.py` | 1/1 |
 | Разделы Flash / профиль / статус оборудования | `python3 test/scenarios/test_partition_layout.py` | 3/3 |
@@ -42,4 +42,8 @@ Firmware: 1781136байт, OTA slot3145728байт, запас1364592байт. S
 
 ## Windows packaging
 
-`test_file_store` native Windows RED: SDK-independent MSVC build passed; replacement metadata in a Unicode directory failed (13/14 CTest). `test_custom_assets_and_browser_receive_live_url` RED: server rejected missing --assets/--open. After implementation Linux14/14 CTest and12/12 HTTP passed; desktop entry exercised real C++/HTTP save, repeated replacement, UTF-8 names, timer and process restart. Windows workflow runs the same CTest and HTTP suites, then PyInstaller6.22.3 packaging and `test/windows/package_smoke.py` against the extracted ZIP. The POSIX BROWSER executable probe is skipped on Windows; actual package HTTP/assets/engine/persistence is checked there. Artifact is uploaded only after these checks succeed.
+`test_file_store` native Windows RED: SDK-independent MSVC build passed; replacement metadata in a Unicode directory failed (13/14 CTest). `test_custom_assets_and_browser_receive_live_url` RED: server rejected missing --assets/--open. After implementation Linux14/14 CTest and13/13 HTTP passed; desktop entry exercised real C++/HTTP save, repeated replacement, UTF-8 names, timer and process restart. Windows workflow runs the same CTest and HTTP suites, then PyInstaller6.22.3 packaging and `test/windows/package_smoke.py` against the extracted ZIP. The POSIX BROWSER executable probe is skipped on Windows; actual package HTTP/assets/engine/persistence is checked there. Artifact is uploaded only after these checks succeed.
+
+Native Windows run [37603820289](https://github.com/mrWhiskey70/ZigbeeRubi/actions/runs/37603820289):14/14 CTest; HTTP suite passed (one POSIX browser probe skipped); packaged ZIP ran from a Cyrillic path and preserved repeated scenario/device/settings writes across process restart. Windows EXE/resources/source archive hashes checked after download.
+
+Packaging review found Windows registry MIME overrides could serve JS as text/plain; real HTTP regression reproduced RED then deterministic HTML/JS/CSS Content-Type made it GREEN. Updated package smoke checks these MIME headers and also verifies real heartbeat executes delayed OFF without API polling. Restart walkthrough now uses «Отчёты нормы» to initialize sensors and relay before the next motion event. Final package is gated by a new native CI run with these checks; results are linked in PR#1. Interactive Windows default-browser/console-close behavior and a pristine OS without development tools were not directly exercised; stdlib browser launch boundary, static CRT, included Python runtime and extracted user ZIP are verified. SmartScreen/antivirus reputation and hardware behavior remain outside this simulator check.

@@ -13,6 +13,9 @@ from pathlib import Path
 from urllib.parse import urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
+ASSET_TYPES = {'.html':'text/html; charset=utf-8',
+               '.js':'text/javascript; charset=utf-8',
+               '.css':'text/css; charset=utf-8'}
 
 class Bridge:
     def __init__(self, binary, data, virtual):
@@ -85,7 +88,7 @@ def main(argv=None, on_ready=None):
                 if not path.resolve().is_relative_to(assets.resolve()) or not path.is_file():
                     self.send_json(404,{'error':'not_found'});return
                 data=path.read_bytes();self.send_response(200)
-                self.send_header('Content-Type',mimetypes.guess_type(path)[0] or 'application/octet-stream')
+                self.send_header('Content-Type',ASSET_TYPES.get(path.suffix.lower()) or mimetypes.guess_type(path)[0] or 'application/octet-stream')
                 self.send_header('Content-Length',str(len(data)));self.end_headers();self.wfile.write(data);return
             try:
                 size=int(self.headers.get('Content-Length','0'))

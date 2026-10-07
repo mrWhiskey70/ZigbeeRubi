@@ -33,7 +33,7 @@ Target управление разрешено для стандартных OnO
 
 По запросу пользователя от 7 октября добавлены native Windows x64 сборка MSVC, упаковка Python HTTP bridge вместе с C++ движком и UI в `ZigbeeRubi.exe`, автоматическое открытие браузера и хранение в LocalAppData. Пользователю не нужны Python/WSL/компилятор.
 
-Проверки Linux после изменения:14/14 C++ и12/12 HTTP. Начальный Windows прогон подтвердил компиляцию и13/14 C++; `test_file_store` воспроизвёл дефект записи в Unicode-каталог. Исправления используют wide paths и замену существующего файла. Готовый ZIP публикуется только после полного Windows CTest, HTTP suite и проверки распакованного EXE: страницы/модули UI, сценарий ON/60с/OFF, многократная запись, русский путь, перезапуск и восстановление. Фактический результат native проверки — workflow [Windows simulator](https://github.com/mrWhiskey70/ZigbeeRubi/actions/workflows/windows-simulator.yml).
+Проверки Linux после изменения:14/14 C++ и13/13 HTTP. Начальный Windows прогон подтвердил компиляцию и13/14 C++; `test_file_store` воспроизвёл дефект записи в Unicode-каталог. Исправления используют wide paths и замену существующего файла. Готовый ZIP публикуется только после полного Windows CTest, HTTP suite и проверки распакованного EXE: страницы/модули UI, сценарий ON/60с/OFF, многократная запись, русский путь, перезапуск и восстановление. Фактический результат native проверки — workflow [Windows simulator](https://github.com/mrWhiskey70/ZigbeeRubi/actions/workflows/windows-simulator.yml).
 
 ## Что требует оборудования
 
