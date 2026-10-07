@@ -27,12 +27,14 @@ jobs:
       - shell: bash
         run: |
           . /opt/esp/idf/export.sh
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
           idf.py set-target esp32c6
           idf.py build
       - run: bash scripts/check_ota_slot_size.sh build partitions.csv
       - shell: bash
         run: |
           . /opt/esp/idf/export.sh
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
           python3 tools/write_build_manifest.py build
       - uses: actions/upload-artifact@v4
         with:
