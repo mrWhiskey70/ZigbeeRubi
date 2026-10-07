@@ -1,0 +1,97 @@
+{
+  "repository": "Allekslar/zigbee-gateway_v1",
+  "commit": "1838e5b35bfaf3cc8b328ddc044b997019533881",
+  "license": "AGPL-3.0-only",
+  "files": [
+    {
+      "path": "components/core/include/device_id.hpp",
+      "git_blob_sha": "9f466c145ae8c447994c6833122d69e05c3602bb",
+      "sha256": "b804664a37d2fb3589227364204b9ca7ff50ef3d6a284a0aaaab2c2eb52a76f2"
+    },
+    {
+      "path": "components/service/include/device_descriptor_store.hpp",
+      "git_blob_sha": "e1903251ebbd630ef9d4dfcd78b89dea2b3b27c6",
+      "sha256": "d03f29d9ca65e2a20553b88a80b225340a112aff841927a6eb1f9e0a878d4c32"
+    },
+    {
+      "path": "components/service/include/service_public_types.hpp",
+      "git_blob_sha": "7f2e7809dbb81d57af2611ecef45d97411dfbaa5",
+      "sha256": "a20cb9b99691a69e9bf9c955c9e553b4163547e51f83069919364cafd8a13346"
+    },
+    {
+      "path": "components/service/include/tuya_contact_sensor_plugin.hpp",
+      "git_blob_sha": "c9190189dff7f2a12af8f2538d3ba2da438556e1",
+      "sha256": "5b5d10e3b2ae368d9e2d9b0411fcb23dea2cb91094eb3c91b147f72457bf7c96"
+    },
+    {
+      "path": "components/service/include/tuya_dp_parser.hpp",
+      "git_blob_sha": "9766a43530877111f2e0f4282525560501d6df7c",
+      "sha256": "baf979bc8c302950c83052cefd1ba449d06a7ab2e3be40316810e4736f9df66d"
+    },
+    {
+      "path": "components/service/include/tuya_fingerprint.hpp",
+      "git_blob_sha": "9b336d68d280a3d6b4db30d5ebeebd2f2ab4f387",
+      "sha256": "32f1c1af29ce32671bafb145fd2f3b783aa71bd11191b7935dc19471000a412b"
+    },
+    {
+      "path": "components/service/include/tuya_payload_view.hpp",
+      "git_blob_sha": "12bd362be5e519d763ae96ec7a7b9353c8c63921",
+      "sha256": "bbc22c55cac908603a67351a77f5ba974c79a1d79aebcb4961020c3a41a4777b"
+    },
+    {
+      "path": "components/service/include/tuya_plugin.hpp",
+      "git_blob_sha": "aeac99a3d854d0c7e3726ab1e75cec203f7cade0",
+      "sha256": "ae2da3d15b411bacc8fa93233dc9e1e2cbb7ba89e36d7f7b15ecd6c241ba7441"
+    },
+    {
+      "path": "components/service/include/tuya_switch_plugin.hpp",
+      "git_blob_sha": "92328e5db3ddcf391253c39ed483363a4d54fe9e",
+      "sha256": "96e17bffdd830de54a0ac9c0d066de9535bd5d80a27ee80ed486477239f8a026"
+    },
+    {
+      "path": "components/service/tuya_contact_sensor_plugin.cpp",
+      "git_blob_sha": "d04beec6cd822fd46756052a50f6d07710d9fb95",
+      "sha256": "d0a0475b85f19e5d186a3f6edf61df8dc58d0b0a7e86ddd8210de6365723f1f1"
+    },
+    {
+      "path": "components/service/tuya_dp_parser.cpp",
+      "git_blob_sha": "316829eff18008cd1faf4b0a9caec4cd4950987e",
+      "sha256": "4631d381c801201f989ab405358ca7da33938ad65a81a6bfdffd3b6ee02b5880"
+    },
+    {
+      "path": "components/service/tuya_fingerprint.cpp",
+      "git_blob_sha": "f73f3b3c58dea3241234b234107a7ea8260fda69",
+      "sha256": "7f916ef5a1b7f9b81b310dcc9268488863648f685955fc6cec85c449a7747167"
+    },
+    {
+      "path": "components/service/tuya_switch_plugin.cpp",
+      "git_blob_sha": "ce9c9a937b1712fec1b5de259ee762ee6f74ccd7",
+      "sha256": "e9ccd8577749025e740814fc41d23f04703a26984940f059000bacdf2580e54a"
+    },
+    {
+      "path": "test/host/test_tuya_contact_sensor_plugin.cpp",
+      "git_blob_sha": "d01f0e3ecabe81b8f155b0e8deab1cf4b1e627e4",
+      "sha256": "49703f97de7d7ecc1f4944c1bc69dd2c4b718cc383fdf79462f4282239246601"
+    },
+    {
+      "path": "test/host/test_tuya_dp_parser.cpp",
+      "git_blob_sha": "e555e4e9a2e0269ba821dbc350675e9fa58607a0",
+      "sha256": "ae7d28abdaa482836941c4c7c56915ced6d07d93cade88bfa61a1af9813deca0"
+    },
+    {
+      "path": "test/host/test_tuya_fingerprint.cpp",
+      "git_blob_sha": "f6be78ef583753c00fb863c3869522ced8314445",
+      "sha256": "ac0c26c1213626f8a57f96b46d6b6dc5682504304228a91eac7cc6a0e61b5731"
+    },
+    {
+      "path": "test/host/test_tuya_switch_plugin.cpp",
+      "git_blob_sha": "f52f67df1c587894d89633da3c3fd39508723b04",
+      "sha256": "243b1ba22cbdcacd6af32e3212c66f9a0b48651226927eaf64c2a081d5bb8367"
+    },
+    {
+      "path": "LICENSE",
+      "git_blob_sha": "be3f7b28e564e7dd05eaf59d64adba1a4065ac0e",
+      "sha256": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+[
+  {
+    "test": "test_tuya_dp_parser",
+    "compile": 0,
+    "run": 0,
+    "output": ""
+  },
+  {
+    "test": "test_tuya_contact_sensor_plugin",
+    "compile": 0,
+    "run": 0,
+    "output": ""
+  },
+  {
+    "test": "test_tuya_switch_plugin",
+    "compile": 0,
+    "run": 0,
+    "output": ""
+  },
+  {
+    "test": "test_tuya_fingerprint",
+    "compile": 0,
+    "run": 0,
+    "output": ""
+  }
+]
