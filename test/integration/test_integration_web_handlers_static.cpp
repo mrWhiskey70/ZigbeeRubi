@@ -162,7 +162,7 @@ int main() {
     assert(g_last_type == "text/css; charset=utf-8");
     assert(g_last_response.find("body{color:#000;}") != std::string::npos);
     assert(g_set_hdr_calls == 3);
-    assert(g_last_cache_control == "public, max-age=31536000, immutable");
+    assert(g_last_cache_control == "no-store, max-age=0");
     assert(g_last_content_encoding == "gzip");
     assert(g_last_vary == "Accept-Encoding");
     assert(g_last_connection.empty());
@@ -172,7 +172,7 @@ int main() {
     assert(g_last_type == "application/javascript; charset=utf-8");
     assert(g_last_response.find("console.log('ok');") != std::string::npos);
     assert(g_set_hdr_calls == 3);
-    assert(g_last_cache_control == "public, max-age=31536000, immutable");
+    assert(g_last_cache_control == "no-store, max-age=0");
     assert(g_last_content_encoding == "gzip");
     assert(g_last_vary == "Accept-Encoding");
     assert(g_last_connection.empty());

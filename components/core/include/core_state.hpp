@@ -12,7 +12,11 @@
 
 namespace core {
 
+#ifdef ZIGBEERUBI_PROTOTYPE
+inline constexpr std::size_t kMaxDevices = 16;
+#else
 inline constexpr std::size_t kMaxDevices = 64;
+#endif
 inline constexpr std::size_t kMaxEffectsPerReduce = 4;
 
 enum class CoreReportingState : uint8_t {

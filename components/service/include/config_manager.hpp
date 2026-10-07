@@ -13,7 +13,7 @@ class ConfigManager {
 public:
     static constexpr uint32_t kCurrentSchemaVersion = 3;
     static constexpr uint32_t kDefaultCommandTimeoutMs = 5000;
-    static constexpr uint8_t kDefaultMaxCommandRetries = 1;
+    static constexpr uint8_t kDefaultMaxCommandRetries = 0;
     static constexpr uint8_t kMaxCommandRetries = 5;
     static constexpr std::size_t kMaxReportingProfiles = 16;
     static constexpr std::size_t kReportingDeviceClassCount = 3;

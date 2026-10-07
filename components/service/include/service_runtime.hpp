@@ -37,6 +37,7 @@
 namespace service {
 
 class ServiceRuntimeTestAccess;
+class ScenarioManager;
 
 // External app/web/bridge code should depend on ServiceRuntimeApi. This concrete
 // runtime stays visible for bootstrap, internal managers, and tests.
@@ -71,6 +72,7 @@ public:
 
     ServiceRuntime(core::CoreRegistry& registry, EffectExecutor& effect_executor) noexcept;
 
+    bool scenario_request(std::string_view, std::string &) noexcept override;
     uint32_t next_operation_request_id() noexcept override;
     bool post_event(const core::CoreEvent& event) noexcept;
     CommandSubmitStatus post_device_power_request(const DevicePowerCommandRequest& request) noexcept override;
@@ -164,6 +166,9 @@ public:
     bool config_bootstrap_ok() const noexcept;
 
 private:
+#ifdef ESP_PLATFORM
+    ScenarioManager *scenario_manager_{nullptr};
+#endif
     friend class CommandManager;
     friend class ConnectivityManager;
     friend class NetworkManager;

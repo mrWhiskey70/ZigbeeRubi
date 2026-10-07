@@ -29,6 +29,8 @@ struct CoreEffect {
     uint16_t device_short_addr{kUnknownDeviceShortAddr};
     uint32_t arg_u32{0};
     bool arg_bool{false};
+    uint8_t endpoint{1};
+    bool native_channel{false};
 };
 
 }  // namespace core

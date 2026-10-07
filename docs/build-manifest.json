@@ -1,0 +1,36 @@
+{
+  "schema": 1,
+  "hardware_verified": false,
+  "idf_version": "v5.5.2",
+  "target": "esp32c6",
+  "flash_mb": 16,
+  "ota_slot_bytes": 3145728,
+  "nvs_bytes": 524288,
+  "source_commit": "f28df411f31f6c2fc0ea230adfda498b015572d2",
+  "source_dirty": true,
+  "upstream_commit": "1838e5b35bfaf3cc8b328ddc044b997019533881",
+  "dependencies": {
+    "esp-zigbee-lib": "1.6.8",
+    "esp-zboss-lib": "1.6.4",
+    "mdns": "1.9.1"
+  },
+  "artifacts": {
+    "zigbee_gateway.bin": {
+      "bytes": 1780256,
+      "sha256": "27150eda34365c68f011210531259a48579159cdf37817537dfb4b0b9abe130a"
+    },
+    "bootloader/bootloader.bin": {
+      "bytes": 22736,
+      "sha256": "2d259c47d2f55f1c56c8d8e220fe7aab5a68a5fc5082153ec6874b03d3a339d5"
+    },
+    "partition_table/partition-table.bin": {
+      "bytes": 3072,
+      "sha256": "ced7a124ccd68371b13ee47ca6285e5c0d234023e8de53e6c9b10b9a72fd4993"
+    },
+    "ota_data_initial.bin": {
+      "bytes": 8192,
+      "sha256": "7d2c7ac4888bfd75cd5f56e8d61f69595121183afc81556c876732fd3782c62f"
+    }
+  },
+  "source_content_sha256": "46ccc445120a5b38ca92489b04579680a45bffb17dccf4173be3873638bdd764"
+}

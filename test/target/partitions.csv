@@ -1,11 +1,11 @@
-# Name,      Type, SubType, Offset,   Size,   Flags
-# ESP32-C6 target-test layout (8MB) with required Zigbee storage partitions.
-nvs,         data, nvs,     0x9000,   0x6000,
-otadata,     data, ota,     0xf000,   0x2000,
-phy_init,    data, phy,     0x11000,  0x1000,
-ota_0,       app,  ota_0,   0x20000,  0x280000,
-ota_1,       app,  ota_1,   0x2a0000, 0x280000,
-zb_storage,  data, fat,     0x520000, 0x10000,
-zb_fct,      data, fat,     0x530000, 0x4000,
-coredump,    data, coredump,0x534000, 0x10000,
-storage,     data, spiffs,  0x544000, 0x2bc000,
+# ESP32-C6 / 16 MiB Flash. Both OTA slots are 3 MiB.
+# NVS includes dual scenario slots, commit records and Wi-Fi credentials.
+nvs,         data, nvs,      0x9000,   0x80000,
+otadata,     data, ota,      0x89000,  0x2000,
+phy_init,    data, phy,      0x8b000,  0x1000,
+ota_0,       app,  ota_0,    0x90000,  0x300000,
+ota_1,       app,  ota_1,    0x390000, 0x300000,
+zb_storage,  data, fat,      0x690000, 0x10000,
+zb_fct,      data, fat,      0x6a0000, 0x4000,
+coredump,    data, coredump, 0x6a4000, 0x10000,
+storage,     data, spiffs,   0x6b4000, 0x94c000,

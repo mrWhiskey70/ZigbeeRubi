@@ -32,6 +32,7 @@ namespace {
 constexpr const char* kTag = LOG_TAG_MQTT_BRIDGE;
 hal_mqtt_config_t build_transport_config() noexcept {
     hal_mqtt_config_t config{};
+#if CONFIG_ZGW_MQTT_TRANSPORT_ENABLED
     config.broker_uri = CONFIG_ZGW_MQTT_BROKER_URI;
     config.client_id = CONFIG_ZGW_MQTT_CLIENT_ID;
 #if defined(CONFIG_ZGW_MQTT_USERNAME)
@@ -44,6 +45,7 @@ hal_mqtt_config_t build_transport_config() noexcept {
     config.network_timeout_ms = CONFIG_ZGW_MQTT_NETWORK_TIMEOUT_MS;
     config.reconnect_timeout_ms = CONFIG_ZGW_MQTT_RECONNECT_TIMEOUT_MS;
     config.auto_reconnect = true;
+#endif
     return config;
 }
 

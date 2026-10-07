@@ -34,6 +34,8 @@ struct CoreCommand {
     uint16_t reporting_max_interval_seconds{0};
     uint32_t reporting_reportable_change{0};
     uint8_t reporting_capability_flags{0};
+    uint8_t endpoint{1};
+    bool native_channel{false};
 };
 
 enum class CoreCommandResultType : uint8_t {

@@ -2,6 +2,9 @@
 /* Copyright (C) 2026 Alex.K. */
 
 #include "service_runtime.hpp"
+#ifdef ESP_PLATFORM
+#include "scenario_manager.hpp"
+#endif
 
 #include <algorithm>
 #include <inttypes.h>
@@ -41,7 +44,7 @@ constexpr std::size_t kMaxProcessedEventsPerCycle = 64U;
 #ifdef ESP_PLATFORM
 constexpr const char* kRuntimeTaskName = "service_runtime";
 // NVS + network request processing can exceed 6KB on ESP32-C6 in AP provisioning flow.
-constexpr uint32_t kRuntimeTaskStackSize = 9216U;
+constexpr uint32_t kRuntimeTaskStackSize = 24576U;
 constexpr UBaseType_t kRuntimeTaskPriority = 6U;
 constexpr TickType_t kRuntimeTaskPeriodTicks = pdMS_TO_TICKS(20);
 constexpr const char* kScanWorkerTaskName = "wifi_scan_worker";
@@ -835,6 +838,7 @@ bool ServiceRuntime::post_zigbee_attribute_report_raw(const ZigbeeRawAttributeRe
         core::CoreEvent event{};
         event.type = core::CoreEventType::kDeviceTelemetryUpdated;
         event.device_short_addr = report.short_addr;
+        event.verified_standard_report = true;
         event.value_u32 = now_ms;
         event.telemetry_kind = core::CoreTelemetryKind::kTemperatureCentiC;
         event.telemetry_i32 = static_cast<int32_t>(temperature_centi_c);
@@ -851,6 +855,7 @@ bool ServiceRuntime::post_zigbee_attribute_report_raw(const ZigbeeRawAttributeRe
         core::CoreEvent event{};
         event.type = core::CoreEventType::kDeviceTelemetryUpdated;
         event.device_short_addr = report.short_addr;
+        event.verified_standard_report = true;
         event.value_u32 = now_ms;
         event.telemetry_kind = core::CoreTelemetryKind::kContactIasZoneStatus;
         event.telemetry_i32 = static_cast<int32_t>(normalized_status);
@@ -868,6 +873,7 @@ bool ServiceRuntime::post_zigbee_attribute_report_raw(const ZigbeeRawAttributeRe
         core::CoreEvent event{};
         event.type = core::CoreEventType::kDeviceTelemetryUpdated;
         event.device_short_addr = report.short_addr;
+        event.verified_standard_report = true;
         event.value_u32 = now_ms;
         event.telemetry_kind = core::CoreTelemetryKind::kBatteryPercent;
         event.telemetry_i32 = battery_percent;
@@ -885,6 +891,7 @@ bool ServiceRuntime::post_zigbee_attribute_report_raw(const ZigbeeRawAttributeRe
         core::CoreEvent event{};
         event.type = core::CoreEventType::kDeviceTelemetryUpdated;
         event.device_short_addr = report.short_addr;
+        event.verified_standard_report = true;
         event.value_u32 = now_ms;
         event.telemetry_kind = core::CoreTelemetryKind::kBatteryVoltageMilliV;
         event.telemetry_i32 = battery_mv;
@@ -900,6 +907,8 @@ bool ServiceRuntime::post_zigbee_attribute_report_raw(const ZigbeeRawAttributeRe
     core::CoreEvent event{};
     event.type = core::CoreEventType::kAttributeReported;
     event.device_short_addr = report.short_addr;
+    event.endpoint = report.endpoint;
+    event.verified_standard_report = true;
     event.cluster_id = report.cluster_id;
     event.attribute_id = report.attribute_id;
     event.value_u32 = decoded_u32;
@@ -1091,6 +1100,10 @@ bool ServiceRuntime::initialize_hal_adapter() noexcept {
     }
 
     reload_config_bootstrap_state();
+#ifdef ESP_PLATFORM
+    if(!scenario_manager_) scenario_manager_ = new (std::nothrow) ScenarioManager(*this);
+    if(!scenario_manager_ || !scenario_manager_->ready()) return false;
+#endif
     state_persistence_coordinator_.mark_restore_pending();
     return true;
 }
@@ -1250,7 +1263,17 @@ bool ServiceRuntime::ensure_ota_worker_started() noexcept {
 }
 #endif
 
+bool ServiceRuntime::scenario_request(std::string_view request,std::string &response) noexcept {
+#ifdef ESP_PLATFORM
+ return scenario_manager_ && scenario_manager_->request(request,response);
+#else
+ (void)request;(void)response;return false;
+#endif
+}
 void ServiceRuntime::apply_managers(const core::CoreEvent& event) noexcept {
+#ifdef ESP_PLATFORM
+    if(scenario_manager_) scenario_manager_->on_event(event);
+#endif
     if (event.type == core::CoreEventType::kAttributeReported &&
         event.cluster_id == 0x0406U &&
         event.attribute_id == 0x0000U) {
@@ -1266,6 +1289,7 @@ void ServiceRuntime::apply_managers(const core::CoreEvent& event) noexcept {
                 monotonic_now_ms(),
                 occupancy_policy,
                 &domain_event)) {
+            domain_event.verified_standard_report = event.verified_standard_report;
             if (!push_event(domain_event)) {
                 (void)stats_.dropped_events.fetch_add(1, std::memory_order_relaxed);
             }
@@ -1302,7 +1326,7 @@ void ServiceRuntime::execute_effects(const core::CoreEffectList& effects) noexce
         bool ok = false;
         if (effect.type == core::CoreEffectType::kSendZigbeeOnOff) {
             bool routed = false;
-            ok = try_execute_tuya_on_off(effect, &routed);
+            if(!effect.native_channel) ok = try_execute_tuya_on_off(effect, &routed);
             if (!routed) {
                 ok = effect_executor_->execute(effect);
             }
@@ -1407,8 +1431,17 @@ std::size_t ServiceRuntime::process_pending() noexcept {
         overall_progress = true;
         (void)stats_.processed_events.fetch_add(1, std::memory_order_relaxed);
 
+#ifdef ESP_PLATFORM
+        if(!event.device_id.valid() && scenario_manager_) scenario_manager_->identify(event);
+#endif
         apply_managers(event);
 
+#ifdef ESP_PLATFORM
+        if (event.type == core::CoreEventType::kNetworkUp && has_saved_wifi_credentials()) {
+            mark_wifi_credentials_available();
+            (void)ensure_zigbee_started();
+        }
+#endif
         if (event.type == core::CoreEventType::kNetworkDown) {
             SR_LOGW("Network down detected, triggering automatic reconnection");
             (void)autoconnect_from_saved_credentials();
@@ -1455,6 +1488,9 @@ std::size_t ServiceRuntime::process_pending() noexcept {
 }
 
 std::size_t ServiceRuntime::tick(uint32_t now_ms) noexcept {
+#ifdef ESP_PLATFORM
+    if(scenario_manager_) scenario_manager_->tick();
+#endif
     stats_.stale_devices.store(reporting_manager_.degraded_count(), std::memory_order_relaxed);
     last_tick_ms_.store(now_ms, std::memory_order_release);
     (void)drain_mqtt_status_update();

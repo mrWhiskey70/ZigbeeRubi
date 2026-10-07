@@ -145,7 +145,7 @@ core::CoreError CommandManager::submit_command_internal(
     }
 
     tracked->command = command;
-    tracked->retries_left = runtime.config_manager_.max_command_retries();
+    tracked->retries_left = command.native_channel ? 0 : runtime.config_manager_.max_command_retries();
 
     if (!runtime.push_event(request_event)) {
         return core::CoreError::kNoCapacity;

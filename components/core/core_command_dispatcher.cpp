@@ -38,6 +38,8 @@ CoreEvent command_to_event(const CoreCommand& command) noexcept {
     event.device_id = command.device_id;
     event.device_short_addr = command.device_short_addr;
     event.value_bool = command.desired_power_on;
+    event.endpoint = command.endpoint;
+    event.native_channel = command.native_channel;
     event.value_u32 = command.issued_at_ms;
 
     switch (command.type) {

@@ -28,6 +28,8 @@ idf_component_register(
         "reporting_manager.cpp"
         "scan_manager.cpp"
         "service_runtime.cpp"
+        "scenario_manager.cpp"
+        "scenario_nvs_backend.cpp"
         "state_persistence_coordinator.cpp"
         "zigbee_lifecycle_coordinator.cpp"
         "device_descriptor_store.cpp"
@@ -44,7 +46,7 @@ idf_component_register(
         "../app_hal/ota_release_manifest_pub.pem"
         "../app_hal/ota_release_manifest_pub_next.pem"
     INCLUDE_DIRS "include"
-    REQUIRES core app_hal common
+    REQUIRES core app_hal common scenario_engine
 )
 
 zg_apply_component_compile_policy(${COMPONENT_LIB})

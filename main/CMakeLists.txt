@@ -6,7 +6,7 @@ include("${CMAKE_CURRENT_LIST_DIR}/../cmake/ProjectCompileOptions.cmake")
 idf_component_register(
     SRCS "app_main.cpp"
     INCLUDE_DIRS "."
-    REQUIRES core service web_ui mqtt_bridge matter_bridge app_hal common esp_timer
+    REQUIRES core service web_ui mqtt_bridge matter_bridge app_hal common esp_timer esp_netif
 )
 
 zg_apply_component_compile_policy(${COMPONENT_LIB})

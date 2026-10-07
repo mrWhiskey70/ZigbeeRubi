@@ -106,7 +106,7 @@ int main() {
     assert(g_last_response.find("\"last_command_status\":1") != std::string::npos);
     assert(g_last_response.find("\"autoconnect_failures\":3") != std::string::npos);
     assert(g_last_response.find("\"command_timeout_ms\":5000") != std::string::npos);
-    assert(g_last_response.find("\"max_command_retries\":1") != std::string::npos);
+    assert(g_last_response.find("\"max_command_retries\":0") != std::string::npos);
 
     
     assert(g_last_response.front() == '{');

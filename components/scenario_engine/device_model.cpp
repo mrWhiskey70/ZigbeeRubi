@@ -2,7 +2,30 @@
 #include "device_model.hpp"
 #include "scenario_validation.hpp"
 #include <cstring>
+#include <memory>
 namespace scenario {
+ValidationResult
+DeviceModel::configure(const DeviceSnapshot &definition) noexcept {
+  for (size_t i = 0; i < size_; ++i)
+    if (devices_[i].id == definition.id) {
+      auto next = definition;
+      if (!next.name[0])
+        next.name = devices_[i].name;
+      next.available = devices_[i].available || definition.available;
+      next.values = devices_[i].values;
+      for (size_t j = 0; j < next.channel_count; ++j)
+        for (size_t k = 0; k < devices_[i].channel_count; ++k)
+          if (next.channels[j].id == devices_[i].channels[k].id)
+            next.channels[j].power = devices_[i].channels[k].power;
+      auto check = std::make_unique<DeviceModel>();
+      auto v = check->add(next);
+      if (!v)
+        return v;
+      devices_[i] = next;
+      return {};
+    }
+  return add(definition);
+}
 ValidationResult DeviceModel::add(const DeviceSnapshot &d) noexcept {
   if (!d.id.valid() || d.channel_count > MaxChannels ||
       d.capabilities >= (1U << CapabilityCount))

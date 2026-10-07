@@ -62,6 +62,9 @@ struct CoreEvent {
     CoreTelemetryKind telemetry_kind{CoreTelemetryKind::kNone};
     int32_t telemetry_i32{0};
     bool telemetry_valid{false};
+    uint8_t endpoint{1};
+    bool native_channel{false};
+    bool verified_standard_report{false};
 };
 
 }  // namespace core

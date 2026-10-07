@@ -9,6 +9,8 @@ target_include_directories(cjson_host PUBLIC ../../components/scenario_engine/ve
 add_library(scenario_host ../../components/core/device_id.cpp ${SOURCES})
 target_include_directories(scenario_host PUBLIC ../../components/core/include ../../components/scenario_engine/include)
 target_link_libraries(scenario_host PUBLIC cjson_host)
+target_compile_definitions(scenario_host PUBLIC ZIGBEERUBI_PROTOTYPE=1)
+target_include_directories(scenario_host PUBLIC ../../components/service/include)
 target_compile_options(scenario_host PRIVATE -Wall -Wextra -Werror)
 file(GLOB TESTS CONFIGURE_DEPENDS test_*.cpp)
 foreach(TEST ${TESTS})

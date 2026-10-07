@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 #include "scenario_store.hpp"
 #include <cstring>
+#include <memory>
 #include <string>
 namespace scenario {
 namespace {
@@ -87,7 +88,8 @@ ValidationResult deserialize(std::string_view p, ScenarioSet &out) {
   uint64_t count = get(p, 0, 4);
   if (count > MaxRules)
     return {ErrorCode::Storage};
-  ScenarioSet s;
+  auto s_ptr = std::make_unique<ScenarioSet>();
+  auto &s = *s_ptr;
   size_t pos = 4;
   for (size_t i = 0; i < count; ++i) {
     if (pos + 4 > p.size())

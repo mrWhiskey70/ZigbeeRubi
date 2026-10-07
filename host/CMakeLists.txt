@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 project(zigbee_hub_simulator C CXX)
+enable_testing()
 set(CMAKE_CXX_STANDARD 17)
 add_subdirectory(../test/scenarios scenario-tests)
 add_executable(zigbee_hub_sim simulator_main.cpp simulator_runtime.cpp file_store.cpp)

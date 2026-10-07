@@ -21,7 +21,11 @@ bool EffectExecutor::execute(const core::CoreEffect& effect) noexcept {
         case core::CoreEffectType::kSetLed:
             return hal_led_set(effect.arg_bool) == HAL_LED_STATUS_OK;
         case core::CoreEffectType::kSendZigbeeOnOff:
+            #ifdef ESP_PLATFORM
+            return hal_zigbee_send_on_off_endpoint(effect.correlation_id, effect.device_short_addr, effect.endpoint, effect.arg_bool) ==
+#else
             return hal_zigbee_send_on_off(effect.correlation_id, effect.device_short_addr, effect.arg_bool) ==
+#endif
                    HAL_ZIGBEE_STATUS_OK;
         case core::CoreEffectType::kRefreshNetwork:
             return hal_wifi_refresh() == HAL_WIFI_STATUS_OK;

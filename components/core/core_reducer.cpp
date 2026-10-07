@@ -77,7 +77,7 @@ void apply_onoff_attribute(CoreReduceResult* out, const CoreEvent& event, bool* 
     static constexpr uint16_t kOnOffClusterId = 0x0006;
     static constexpr uint16_t kOnOffAttributeId = 0x0000;
 
-    if (event.cluster_id != kOnOffClusterId || event.attribute_id != kOnOffAttributeId) {
+    if (event.endpoint != 1 || event.cluster_id != kOnOffClusterId || event.attribute_id != kOnOffAttributeId) {
         return;
     }
 
@@ -364,6 +364,8 @@ CoreReduceResult core_reduce(const CoreState& prev, const CoreEvent& event) noex
                 event.device_short_addr,
                 0,
                 event.value_bool,
+                event.endpoint,
+                event.native_channel,
             });
             break;
 

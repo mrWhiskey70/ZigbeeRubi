@@ -6,6 +6,8 @@
 #include <array>
 #include <cstddef>
 #include <cstdint>
+#include <string_view>
+#include <string>
 
 #include "application_requests.hpp"
 #include "config_manager.hpp"
@@ -384,6 +386,8 @@ struct MqttBridgeSnapshot {
 
 class ServiceRuntimeApi : public MatterRuntimeApi {
 public:
+    virtual bool scenario_request(std::string_view, std::string &) noexcept { return false; }
+
     virtual ~ServiceRuntimeApi() = default;
 
     virtual void set_capabilities(const RuntimeCapabilities& capabilities) noexcept = 0;

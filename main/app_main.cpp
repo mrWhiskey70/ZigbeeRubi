@@ -5,6 +5,7 @@
 #include <inttypes.h>
 #include "effect_executor.hpp"
 #include "esp_log.h"
+#include "esp_netif_sntp.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "hal_matter.h"
@@ -20,32 +21,16 @@
 namespace {
 
 constexpr const char* kTag = LOG_TAG_APP_MAIN;
-constexpr const char* kGatewayHostName = "zigbee-gateway";
-constexpr const char* kProvisioningApPassword = "12345678";
-constexpr TickType_t kDeferredZigbeeStartDelayTicks = pdMS_TO_TICKS(15000);
-constexpr const char* kDeferredZigbeeTaskName = "zigbee_start";
-constexpr uint32_t kDeferredZigbeeTaskStackSize = 4096U;
-constexpr UBaseType_t kDeferredZigbeeTaskPriority = 4U;
-
+constexpr const char* kGatewayHostName = "zigbeerubi";
+constexpr const char* kProvisioningApPassword = "";
 core::CoreRegistry g_registry;
 service::EffectExecutor g_effect_executor;
 service::ServiceRuntime g_runtime(g_registry, g_effect_executor);
 web_ui::WebServer g_web_server(g_runtime);
+#if CONFIG_ZGW_MQTT_TRANSPORT_ENABLED
 mqtt_bridge::MqttBridge g_mqtt;
+#endif
 matter_bridge::MatterBridge g_matter;
-
-void deferred_zigbee_start_task(void* arg) {
-    auto* runtime = static_cast<service::ServiceRuntime*>(arg);
-    if (runtime == nullptr) {
-        vTaskDelete(nullptr);
-        return;
-    }
-
-    vTaskDelay(kDeferredZigbeeStartDelayTicks);
-    const bool started = runtime->ensure_zigbee_started();
-    ESP_LOGI(kTag, "Deferred Zigbee start after bootstrap window, started=%s", started ? "yes" : "no");
-    vTaskDelete(nullptr);
-}
 
 }  // namespace
 
@@ -116,6 +101,8 @@ extern "C" void app_main(void) {
             break;
     }
 
+    esp_sntp_config_t time_config = ESP_NETIF_SNTP_DEFAULT_CONFIG("pool.ntp.org");
+    (void)esp_netif_sntp_init(&time_config);
     if (!g_runtime.start()) {
         const service::ConfigManager::LoadReport& config_report = g_runtime.config_load_report();
         ESP_LOGE(
@@ -154,6 +141,7 @@ extern "C" void app_main(void) {
         }
     }
 
+#if CONFIG_ZGW_MQTT_TRANSPORT_ENABLED
     if (!caps.mqtt_available) {
         ESP_LOGI(kTag, "MQTT bridge not started: capability unavailable (CONFIG_ZGW_MQTT_TRANSPORT_ENABLED=n)");
     } else {
@@ -165,6 +153,8 @@ extern "C" void app_main(void) {
             }
         }
     }
+
+#endif
 
     if (!caps.matter_target_available) {
         ESP_LOGI(kTag, "Matter bridge not started: capability unavailable (target adapter not linked)");
@@ -178,23 +168,8 @@ extern "C" void app_main(void) {
         }
     }
 
-    if (!caps.zigbee_available) {
-        ESP_LOGW(kTag, "Zigbee not started: capability unavailable (CONFIG_ZGW_ZIGBEE_ENABLED=n)");
-    } else {
-        TaskHandle_t deferred_zigbee_task = nullptr;
-        if (xTaskCreate(
-                &deferred_zigbee_start_task,
-                kDeferredZigbeeTaskName,
-                kDeferredZigbeeTaskStackSize,
-                &g_runtime,
-                kDeferredZigbeeTaskPriority,
-                &deferred_zigbee_task) != pdPASS) {
-            ESP_LOGE(kTag, "Deferred Zigbee start task creation failed");
-            while (true) {
-                vTaskDelay(pdMS_TO_TICKS(1000));
-            }
-        }
-    }
+    // NetworkUp owns the initial Zigbee start after provisioning switches to STA.
+    ESP_LOGI(kTag,"Zigbee bootstrap waits for configured STA connectivity");
 
 #if CONFIG_ZGW_OTA_ENABLED && CONFIG_ZGW_OTA_BOOT_CONFIRM_ENABLED
     switch (service::confirm_pending_ota_image()) {

@@ -40,6 +40,7 @@ public:
   void disable(ScenarioId) noexcept;
   void reset_pending() noexcept;
   const ScenarioSet &scenarios() const noexcept { return set_; }
+  void clear_log() noexcept { log_.clear(); }
   const ScenarioLog &log() const noexcept { return log_; }
   size_t pending() const noexcept { return reserved(); }
 };

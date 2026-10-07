@@ -7,6 +7,7 @@ idf_component_register(
     SRCS
         "web_server.cpp"
         "web_routes.cpp"
+        "web_handlers_v1.cpp"
         "web_handlers_static.cpp"
         "web_handlers_device.cpp"
         "web_handlers_network.cpp"
@@ -15,7 +16,7 @@ idf_component_register(
         "web_handlers_rcp.cpp"
         "web_handler_common.cpp"
     INCLUDE_DIRS "include"
-    REQUIRES core service common esp_http_server esp_timer
+    REQUIRES core service common esp_http_server esp_timer json
 )
 
 if(NOT CMAKE_BUILD_EARLY_EXPANSION)

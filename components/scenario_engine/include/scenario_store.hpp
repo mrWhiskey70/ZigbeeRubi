@@ -1,11 +1,14 @@
 #pragma once
 #include "scenario_codec.hpp"
+#include <string>
 #include <string_view>
 #include <vector>
 namespace scenario {
 class StoreBackend {
 public:
   virtual ~StoreBackend() = default;
+  virtual bool read_metadata(std::string &) noexcept { return false; }
+  virtual bool write_metadata(std::string_view) noexcept { return false; }
   virtual bool read_slot(unsigned, std::vector<uint8_t> &) noexcept = 0;
   virtual bool write_slot(unsigned, std::string_view) noexcept = 0;
   virtual bool read_active_generation(unsigned,

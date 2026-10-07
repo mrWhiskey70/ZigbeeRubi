@@ -9,6 +9,7 @@ class DeviceModel {
   uint64_t sequence_ = 0;
 
 public:
+  ValidationResult configure(const DeviceSnapshot &) noexcept;
   ValidationResult add(const DeviceSnapshot &) noexcept;
   ValidationResult apply_report(const DeviceReport &, uint64_t,
                                 EventBatch &) noexcept;

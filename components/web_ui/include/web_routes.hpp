@@ -17,6 +17,7 @@ struct WebRouteContext {
     std::atomic<uint32_t>* next_correlation_id{nullptr};
 };
 
+bool register_v1_routes(void*, WebRouteContext*) noexcept;
 bool register_web_routes(void* server_handle, WebRouteContext* context) noexcept;
 bool register_static_routes(void* server_handle, WebRouteContext* context) noexcept;
 bool register_device_routes(void* server_handle, WebRouteContext* context) noexcept;

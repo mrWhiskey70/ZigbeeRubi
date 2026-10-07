@@ -15,6 +15,11 @@ class ScenarioLog {
   uint64_t sequence_ = 0;
 
 public:
+  void clear() noexcept {
+    size_ = 0;
+    start_ = 0;
+    sequence_ = 0;
+  }
   void append(uint64_t, ScenarioId, ChannelKey, OperationId, CommandStatus,
               const char *) noexcept;
   size_t size() const noexcept { return size_; }

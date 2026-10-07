@@ -8,5 +8,6 @@ if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/sdkconfig.mqtt.local")
     list(APPEND SDKCONFIG_DEFAULTS "sdkconfig.mqtt.local")
 endif()
 
+add_compile_definitions(ZIGBEERUBI_PROTOTYPE=1)
 include($ENV{IDF_PATH}/tools/cmake/project.cmake)
 project(zigbee_gateway)

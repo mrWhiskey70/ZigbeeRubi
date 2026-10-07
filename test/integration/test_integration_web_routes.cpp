@@ -42,6 +42,7 @@ void reset_expectations() {
 }  // namespace
 
 namespace web_ui {
+bool register_v1_routes(void*,WebRouteContext*) noexcept {return true;}
 
 bool register_static_routes(void* server_handle, WebRouteContext* context) noexcept {
     (void)server_handle;

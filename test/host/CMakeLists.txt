@@ -610,3 +610,7 @@ add_executable(test_tuya_hybrid_device test_tuya_hybrid_device.cpp)
 target_link_libraries(test_tuya_hybrid_device PRIVATE service_host)
 zg_apply_component_compile_policy(test_tuya_hybrid_device)
 add_test(NAME test_tuya_hybrid_device COMMAND test_tuya_hybrid_device)
+
+add_executable(test_channel_command test_channel_command.cpp)
+target_link_libraries(test_channel_command PRIVATE core_host)
+add_test(NAME test_channel_command COMMAND test_channel_command)

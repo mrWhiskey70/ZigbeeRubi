@@ -7,11 +7,13 @@ set(EXTRA_COMPONENT_DIRS
     "${CMAKE_CURRENT_LIST_DIR}/../../components/app_hal"
     "${CMAKE_CURRENT_LIST_DIR}/../../components/common"
     "${CMAKE_CURRENT_LIST_DIR}/../../components/core"
+    "${CMAKE_CURRENT_LIST_DIR}/../../components/scenario_engine"
     "${CMAKE_CURRENT_LIST_DIR}/../../components/service"
     "${CMAKE_CURRENT_LIST_DIR}/../../components/web_ui"
 )
 
 add_compile_definitions(SERVICE_RUNTIME_TEST_HOOKS=1)
 
+add_compile_definitions(ZIGBEERUBI_PROTOTYPE=1)
 include($ENV{IDF_PATH}/tools/cmake/project.cmake)
 project(hal_target_tests)

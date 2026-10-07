@@ -1,0 +1,28 @@
+name: ZigbeeRubi checks
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  reporting-regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: cmake -S test/host -B build-host && cmake --build build-host -j2
+      - run: ctest --test-dir build-host --output-on-failure
+      - run: ctest --test-dir build-host -R test_service_reporting_manager --output-on-failure
+      - run: cmake -S test/integration -B build-integration && cmake --build build-integration -j2 && ctest --test-dir build-integration --output-on-failure
+      - run: cmake -S host -B build-simulator && cmake --build build-simulator -j2
+      - run: ctest --test-dir build-simulator --output-on-failure && python3 -m unittest discover -s test/host_sim -v
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: npm ci && npm test
+      - run: python3 test/scenarios/test_partition_layout.py
+      - run: bash check_arch_invariants.sh
+  firmware:
+    runs-on: ubuntu-latest
+    container: espressif/idf:v5.5.2
+    steps:
+      - uses: actions/checkout@v4
+      - run: idf.py set-target esp32c6 && idf.py build
+      - run: bash scripts/check_ota_slot_size.sh build partitions.csv

@@ -481,8 +481,7 @@ esp_err_t network_connect_post_handler(httpd_req_t* req) {
 
     ESP_LOGI(
         kTag,
-        "HTTP POST /api/network/connect ssid='%s' save_credentials=%s",
-        ssid,
+        "HTTP POST /api/network/connect save_credentials=%s",
         save_credentials ? "true" : "false");
 
     auto* context = static_cast<WebRouteContext*>(req->user_ctx);

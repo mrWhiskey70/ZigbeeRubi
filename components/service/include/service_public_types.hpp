@@ -8,7 +8,11 @@
 
 namespace service {
 
+#ifdef ZIGBEERUBI_PROTOTYPE
+inline constexpr std::size_t kServiceMaxDevices = 16U;
+#else
 inline constexpr std::size_t kServiceMaxDevices = 64U;
+#endif
 inline constexpr uint32_t kNoCorrelationId = 0U;
 inline constexpr uint16_t kUnknownShortAddr = 0xFFFFU;
 

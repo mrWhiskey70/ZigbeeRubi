@@ -63,7 +63,6 @@ static portMUX_TYPE s_join_state_lock = portMUX_INITIALIZER_UNLOCKED;
 static uint32_t s_primary_channel_mask = (1UL << 13);
 static uint8_t s_max_children = 16U;
 static const uint8_t kGatewayEndpoint = 1U;
-static const uint8_t kDefaultOnOffEndpoint = 1U;
 static const TickType_t kDeviceRemoveLockTimeout = pdMS_TO_TICKS(2000);
 static const int64_t kCommandBridgeEntryTtlUs = 60LL * 1000LL * 1000LL;
 
@@ -398,6 +397,13 @@ static void upsert_known_device_identity(const esp_zb_ieee_addr_t ieee_addr, uin
 
     known_device_identity_t* slot = NULL;
     portENTER_CRITICAL(&s_known_device_identities_lock);
+    // Reused short addresses must never resolve to an older EUI-64 owner.
+    for(size_t i=0;i<kKnownDeviceIdentityCapacity;++i) {
+        if(s_known_device_identities[i].in_use && s_known_device_identities[i].short_addr==short_addr &&
+           memcmp(s_known_device_identities[i].ieee_addr,ieee_addr,sizeof(esp_zb_ieee_addr_t))!=0)
+            memset(&s_known_device_identities[i],0,sizeof(s_known_device_identities[i]));
+    }
+
 
     for (size_t i = 0; i < kKnownDeviceIdentityCapacity; ++i) {
         if (!s_known_device_identities[i].in_use ||
@@ -1102,7 +1108,30 @@ hal_zigbee_status_t hal_zigbee_register_callbacks(const hal_zigbee_callbacks_t* 
     return HAL_ZIGBEE_STATUS_OK;
 }
 
-hal_zigbee_status_t hal_zigbee_send_on_off(uint32_t correlation_id, uint16_t short_addr, bool on) {
+bool hal_zigbee_get_device_eui64(uint16_t short_addr, uint8_t canonical[8]) {
+ if(!canonical) return false;
+#if defined(ESP_PLATFORM) && HAL_ZIGBEE_HAS_ESP_ZB_SDK
+ esp_zb_ieee_addr_t ieee={0}; bool found=false;
+ portENTER_CRITICAL(&s_known_device_identities_lock);
+ for(size_t i=0;i<kKnownDeviceIdentityCapacity;++i) if(s_known_device_identities[i].in_use && s_known_device_identities[i].short_addr==short_addr) {
+ memcpy(ieee,s_known_device_identities[i].ieee_addr,8); found=true; break;
+ }
+ portEXIT_CRITICAL(&s_known_device_identities_lock);
+ if(!found && s_stack_started && esp_zb_lock_acquire(pdMS_TO_TICKS(100))) {
+ found=esp_zb_ieee_address_by_short(short_addr,ieee)==ESP_OK; esp_zb_lock_release();
+ }
+ if(!found || !is_valid_ieee_addr(ieee)) return false;
+ for(size_t i=0;i<8;++i) canonical[i]=ieee[7-i];
+ return true;
+#else
+ (void)short_addr; return false;
+#endif
+}
+hal_zigbee_status_t hal_zigbee_send_on_off(uint32_t correlation_id,uint16_t short_addr,bool on) {
+ return hal_zigbee_send_on_off_endpoint(correlation_id,short_addr,1,on);
+}
+hal_zigbee_status_t hal_zigbee_send_on_off_endpoint(uint32_t correlation_id, uint16_t short_addr, uint8_t endpoint, bool on) {
+if (endpoint == 0 || endpoint > 240) return HAL_ZIGBEE_STATUS_INVALID_ARG;
 #ifdef ESP_PLATFORM
 #if HAL_ZIGBEE_HAS_ESP_ZB_SDK
     if (!is_valid_short_addr(short_addr)) {
@@ -1123,7 +1152,7 @@ hal_zigbee_status_t hal_zigbee_send_on_off(uint32_t correlation_id, uint16_t sho
     esp_zb_zcl_on_off_cmd_t cmd_req = {
         .zcl_basic_cmd = {
             .dst_addr_u.addr_short = short_addr,
-            .dst_endpoint = kDefaultOnOffEndpoint,
+            .dst_endpoint = endpoint,
             .src_endpoint = kGatewayEndpoint,
         },
         .address_mode = ESP_ZB_APS_ADDR_MODE_16_ENDP_PRESENT,
@@ -1137,7 +1166,7 @@ hal_zigbee_status_t hal_zigbee_send_on_off(uint32_t correlation_id, uint16_t sho
         kTag,
         "On/Off command sent short_addr=0x%04x dst_ep=%u cmd=%s tsn=%u correlation_id=%lu",
         (unsigned)short_addr,
-        (unsigned)kDefaultOnOffEndpoint,
+        (unsigned)endpoint,
         on ? "ON" : "OFF",
         (unsigned)tsn,
         (unsigned long)correlation_id);
@@ -1157,6 +1186,7 @@ hal_zigbee_status_t hal_zigbee_send_on_off(uint32_t correlation_id, uint16_t sho
     // Do not emit synthetic SUCCESS on enqueue.
     return HAL_ZIGBEE_STATUS_OK;
 #else
+    if(endpoint != 1) return HAL_ZIGBEE_STATUS_ERR;
     return hal_zigbee_stack_send_on_off(correlation_id, short_addr, on);
 #endif
 #else

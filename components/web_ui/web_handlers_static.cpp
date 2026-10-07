@@ -171,13 +171,13 @@ esp_err_t index_html_get_handler(httpd_req_t *req) {
 
 esp_err_t style_css_get_handler(httpd_req_t *req) {
   return send_embedded_file(req, "text/css; charset=utf-8",
-                            "public, max-age=31536000, immutable",
+                            "no-store, max-age=0",
                             style_css_gz_start, style_css_gz_end);
 }
 
 esp_err_t app_js_get_handler(httpd_req_t *req) {
   return send_embedded_file(req, "application/javascript; charset=utf-8",
-                            "public, max-age=31536000, immutable",
+                            "no-store, max-age=0",
                             app_js_gz_start, app_js_gz_end);
 }
 

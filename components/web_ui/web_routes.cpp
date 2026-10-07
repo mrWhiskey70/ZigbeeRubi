@@ -35,6 +35,7 @@ bool register_web_routes(void* server_handle, WebRouteContext* context) noexcept
         return false;
     }
 
+    if (!register_v1_routes(server_handle,context)) return false;
     return true;
 }
 
