@@ -1,0 +1,23 @@
+name: Windows simulator
+on:
+  push:
+    branches: [feat/scenarios-mvp]
+    paths: ['host/**', 'test/scenarios/**', 'test/host_sim/**', 'test/windows/**', 'scripts/package_windows_simulator.py', '.github/workflows/windows-simulator.yml']
+  pull_request:
+    paths: ['host/**', 'test/scenarios/**', 'test/host_sim/**', 'test/windows/**', 'scripts/package_windows_simulator.py', '.github/workflows/windows-simulator.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  windows:
+    runs-on: windows-latest
+    env:
+      ZIGBEERUBI_SIM_BINARY: ${{ github.workspace }}/build-simulator/Release/zigbee_hub_sim.exe
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: cmake -S host -B build-simulator -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded
+      - run: cmake --build build-simulator --config Release -j 2
+      - run: ctest --test-dir build-simulator -C Release --output-on-failure
