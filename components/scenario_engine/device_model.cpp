@@ -113,8 +113,14 @@ bool DeviceModel::snapshot(DeviceId id, DeviceSnapshot &out) const noexcept {
 }
 void DeviceModel::mark_unavailable(DeviceId id) noexcept {
   for (size_t i = 0; i < size_; ++i)
-    if (devices_[i].id == id)
-      devices_[i].available = false;
+    if (devices_[i].id == id) {
+      auto &d = devices_[i];
+      d.available = false;
+      for (auto &v : d.values)
+        v.known = false;
+      for (auto &c : d.channels)
+        c.power.known = false;
+    }
 }
 void DeviceModel::reset_runtime_state() noexcept {
   for (size_t i = 0; i < size_; ++i) {

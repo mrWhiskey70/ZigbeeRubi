@@ -81,6 +81,8 @@ HubRuntime::HubRuntime(StoreBackend &b, RuntimeAdapter *adapter)
   auto set_ptr = std::make_unique<ScenarioSet>();
   auto &set = *set_ptr;
   ready_ = bool(store_.load(set)) && bool(engine_.restore(set)) && load_names();
+  if (!adapter_ && set.size)
+    model_.reset_runtime_state();
 }
 void HubRuntime::fixtures(bool initialize) {
   model_ = DeviceModel{};
@@ -142,7 +144,7 @@ bool HubRuntime::send(const CommandAction &a) {
       !channel->endpoint || d.short_addr == 0xffff)
     return false;
   for (auto &p : pending_)
-    if (p.used && p.action.channel == a.channel)
+    if (p.used && p.sent && p.action.channel == a.channel)
       return false;
   Pending *slot = nullptr;
   for (auto &p : pending_)
@@ -152,7 +154,7 @@ bool HubRuntime::send(const CommandAction &a) {
     }
   if (!slot)
     return false;
-  *slot = {true, a, clock_.monotonic_ms + 5000};
+  *slot = {true, a, clock_.monotonic_ms + 5000, true};
   operation(a.operation_id, CommandStatus::Pending);
   if (!adapter_->send(a, d, *channel)) {
     slot->used = false;
@@ -172,10 +174,42 @@ void HubRuntime::command_ack(OperationId id, bool success) noexcept {
   if (!success)
     finish(id, CommandStatus::Failed);
 }
+bool HubRuntime::submit_manual(const CommandAction &a) {
+  bool busy = false;
+  for (const auto &p : pending_)
+    if (p.used && p.sent && p.action.channel == a.channel)
+      busy = true;
+  if (!busy)
+    return send(a);
+  for (auto &p : pending_)
+    if (!p.used) {
+      p = {true, a, 0, false};
+      operation(a.operation_id, CommandStatus::Queued);
+      return true;
+    }
+  return false;
+}
+void HubRuntime::drain_manual() {
+  for (auto &p : pending_)
+    if (p.used && !p.sent) {
+      bool busy = false;
+      for (const auto &other : pending_)
+        if (other.used && other.sent &&
+            other.action.channel == p.action.channel)
+          busy = true;
+      if (busy)
+        continue;
+      const auto action = p.action;
+      p.used = false;
+      if (!send(action))
+        finish(action.operation_id, CommandStatus::Failed);
+    }
+}
 void HubRuntime::tick() noexcept {
   for (auto &p : pending_)
-    if (p.used && clock_.monotonic_ms >= p.deadline)
+    if (p.used && p.sent && clock_.monotonic_ms >= p.deadline)
       finish(p.action.operation_id, CommandStatus::Timeout);
+  drain_manual();
   pump();
 }
 ValidationResult HubRuntime::on_report(const DeviceReport &report) noexcept {
@@ -184,10 +218,11 @@ ValidationResult HubRuntime::on_report(const DeviceReport &report) noexcept {
   if (!v)
     return v;
   for (auto &p : pending_)
-    if (p.used && p.action.channel.device_id == report.id &&
+    if (p.used && p.sent && p.action.channel.device_id == report.id &&
         p.action.channel.channel_id == report.channel_id &&
         report.value.known && (report.value.value != 0) == p.action.on)
       finish(p.action.operation_id, CommandStatus::Confirmed);
+  drain_manual();
   for (size_t i = 0; i < events.size; ++i)
     engine_.on_event(events.events[i], clock_);
   pump();
@@ -525,14 +560,13 @@ cJSON *HubRuntime::dispatch(const char *method, const char *path,
         found = true;
     if (!found)
       return failure(status, ErrorCode::MissingChannel);
-    engine_.manual_override({id, static_cast<ChannelId>(channel)});
     OperationId op = manual_id_++;
     if (adapter_) {
       CommandAction a;
       a.channel = {id, static_cast<ChannelId>(channel)};
       a.on = cJSON_IsTrue(power);
       a.operation_id = op;
-      if (!send(a))
+      if (!submit_manual(a))
         return failure(status, ErrorCode::Unavailable);
     } else {
       EventBatch e;
@@ -544,6 +578,7 @@ cJSON *HubRuntime::dispatch(const char *method, const char *path,
         return failure(status, v.code);
       operation(op, CommandStatus::Confirmed);
     }
+    engine_.manual_override({id, static_cast<ChannelId>(channel)});
     status = 202;
     auto *j = ok();
     cJSON_AddNumberToObject(j, "operation_id", op);

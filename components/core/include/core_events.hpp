@@ -65,6 +65,7 @@ struct CoreEvent {
     uint8_t endpoint{1};
     bool native_channel{false};
     bool verified_standard_report{false};
+    bool scenario_forwarded{false};
 };
 
 }  // namespace core

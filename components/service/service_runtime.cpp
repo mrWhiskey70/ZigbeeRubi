@@ -1290,6 +1290,7 @@ void ServiceRuntime::apply_managers(const core::CoreEvent& event) noexcept {
                 occupancy_policy,
                 &domain_event)) {
             domain_event.verified_standard_report = event.verified_standard_report;
+            domain_event.scenario_forwarded = event.verified_standard_report;
             if (!push_event(domain_event)) {
                 (void)stats_.dropped_events.fetch_add(1, std::memory_order_relaxed);
             }

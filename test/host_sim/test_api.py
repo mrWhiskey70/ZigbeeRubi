@@ -48,3 +48,17 @@ class Api(unittest.TestCase):
   self.s.call('/api/v1/sim/restart',{})
   devices=self.s.call('/api/v1/devices')[1]['devices'];self.assertEqual(len(devices),4)
   self.assertEqual(devices[-1]['device_id'],paired['device_id'])
+
+ def test_real_process_restart_has_unknown_first_report(self):
+  import tempfile
+  with tempfile.TemporaryDirectory() as data:
+   first=Server(data)
+   try:self.assertEqual(first.call('/api/v1/scenarios',rule())[0],201)
+   finally:first.close()
+   second=Server(data)
+   try:
+    devices=second.call('/api/v1/devices')[1]['devices']
+    self.assertIsNone(devices[1]['states']['occupancy'])
+    report(second,True)
+    self.assertIsNone(second.call('/api/v1/devices')[1]['devices'][2]['channels'][0]['power'])
+   finally:second.close()

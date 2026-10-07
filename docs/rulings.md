@@ -29,3 +29,17 @@
 - Ruling: Journal returns the complete bounded200-entry ring rather than pagination — small prototype UI always requests the current ring — API pagination remains deferred.
 
 - Ruling: Publish to a feature branch and open a PR, keeping main as the reviewed baseline — implements the user's repository instruction without merging unreviewed work — executable version requires checking out the feature branch until merge.
+
+- Ruling: New scenario occupancy state follows verified raw standard reports in service input order, with duplicate normalized events suppressed — fixes mixed-batch reordering — legacy occupancy hold/debounce remains confined to the old core API.
+
+- Ruling: Radio interoperability, live report delivery, EUI byte order and exact Tuya mappings remain hardware-gated — reviewer could not establish them without the ordered devices — some devices may require a new verified adapter.
+
+- Ruling: Flash identity, electrical setup, Wi-Fi/Zigbee coexistence and OTA remain hardware-gated — no physical board is attached — compile success does not establish board compatibility or operation under load.
+
+- Ruling: Dynamic heap/stack peaks and NVS power-cut behavior remain hardware-gated — host fault injection and SDK compilation do not exercise physical failures — RAM exhaustion or hardware recovery defects may still surface on the board.
+
+- Ruling: Retain the pinned upstream outside the new integration seams — final review focused on the agreed prototype scope — inherited behavior and bugs outside these seams remain.
+
+- Ruling: Final reviewer used static analysis and concrete repros when the execution server disconnected — author restored the environment and reran the full suites — verification is author-run rather than an independent reviewer rerun.
+
+Deferred minors: none; финальное ревью не выявило замечаний Minor.

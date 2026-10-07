@@ -29,6 +29,7 @@ idf_component_register(
         "scan_manager.cpp"
         "service_runtime.cpp"
         "scenario_manager.cpp"
+        "scenario_event_adapter.cpp"
         "scenario_nvs_backend.cpp"
         "state_persistence_coordinator.cpp"
         "zigbee_lifecycle_coordinator.cpp"

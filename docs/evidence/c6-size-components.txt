@@ -2,7 +2,7 @@ Executing action: size-components
 Running ninja in directory /workspace/scratch/f439174bc389/zigbee-rubi-mvp/build-c6
 Executing "ninja all"...
 [1/4] cd /workspace/scratch/f439174bc389/zigbee-rubi-mvp/build-c6/esp-idf/esptool_py && /root/.espressif/python_env/idf5.5_py3.12_env/bin/python /workspace/scratch/f439174bc389/esp-idf/components/partition_table/check_sizes.py --offset 0x8000 partition --type app /workspace/scratch/f439174bc389/zigbee-rubi-mvp/build-c6/partition_table/partition-table.bin /workspace/scratch/f439174bc389/zigbee-rubi-mvp/build-c6/zigbee_gateway.bin
-zigbee_gateway.bin binary size 0x1b2a20 bytes. Smallest app partition is 0x300000 bytes. 0x14d5e0 bytes (43%) free.
+zigbee_gateway.bin binary size 0x1b2d90 bytes. Smallest app partition is 0x300000 bytes. 0x14d270 bytes (43%) free.
 [2/4] Performing build step for 'bootloader'
 [1/1] cd /workspace/scratch/f439174bc389/zigbee-rubi-mvp/build-c6/bootloader/esp-idf/esptool_py && /root/.espressif/python_env/idf5.5_py3.12_env/bin/python /workspace/scratch/f439174bc389/esp-idf/components/partition_table/check_sizes.py --offset 0x8000 bootloader 0x0 /workspace/scratch/f439174bc389/zigbee-rubi-mvp/build-c6/bootloader/bootloader.bin
 Bootloader binary size 0x58d0 bytes. 0x2730 bytes (31%) free.
@@ -50,8 +50,8 @@ Executing "ninja size-components"...
 │ uppl │      │     │      │     │      │     │      │     │      │     │      │
 │ ican │      │     │      │     │      │     │      │     │      │     │      │
 │ t.a  │      │     │      │     │      │     │      │     │      │     │      │
-│ libs │ 5688 │   8 │    0 │   8 │    0 │ 568 │ 1312 │   0 │ 5556 │   0 │    0 │
-│ ervi │    2 │     │      │     │      │  74 │      │     │    2 │     │      │
+│ libs │ 5703 │   8 │    0 │   8 │    0 │ 570 │ 1312 │   0 │ 5571 │   0 │    0 │
+│ ervi │    0 │     │      │     │      │  22 │      │     │    0 │     │      │
 │ ce.a │      │     │      │     │      │     │      │     │      │     │      │
 │ libe │ 4180 │ 126 │  144 │ 163 │ 1085 │ 291 │ 3095 │   0 │ 2606 │  24 │   24 │
 │ sp_h │    9 │  24 │      │   0 │    0 │  61 │      │     │    6 │     │      │
@@ -66,13 +66,13 @@ Executing "ninja size-components"...
 │ libw │ 3682 │   0 │    0 │   0 │    0 │ 368 │ 1774 │   0 │ 1908 │   0 │    0 │
 │ eb_u │    4 │     │      │     │      │  24 │    2 │     │    2 │     │      │
 │ i.a  │      │     │      │     │      │     │      │     │      │     │      │
-│ libm │ 3432 │ 326 │ 3089 │ 175 │    0 │ 167 │  224 │   0 │ 1450 │   0 │    0 │
-│ ain. │    7 │  53 │    7 │   6 │      │   4 │      │     │      │     │      │
+│ libm │ 3445 │ 327 │ 3102 │ 175 │    0 │ 167 │  224 │   0 │ 1450 │   0 │    0 │
+│ ain. │    5 │  81 │    5 │   6 │      │   4 │      │     │      │     │      │
 │ a    │      │     │      │     │      │     │      │     │      │     │      │
 │ libc │ 3349 │ 996 │  728 │ 268 │    0 │ 325 │ 2593 │   0 │ 2991 │   0 │    0 │
 │ .a   │    9 │     │      │     │      │  03 │      │     │    0 │     │      │
-│ libs │ 3266 │   0 │    0 │   0 │    0 │ 326 │  364 │   0 │ 3230 │   0 │    0 │
-│ cena │    6 │     │      │     │      │  66 │      │     │    2 │     │      │
+│ libs │ 3341 │   0 │    0 │   0 │    0 │ 334 │  364 │   0 │ 3304 │   0 │    0 │
+│ cena │    0 │     │      │     │      │  10 │      │     │    6 │     │      │
 │ rio_ │      │     │      │     │      │     │      │     │      │     │      │
 │ engi │      │     │      │     │      │     │      │     │      │     │      │
 │ ne.a │      │     │      │     │      │     │      │     │      │     │      │
@@ -164,8 +164,8 @@ Executing "ninja size-components"...
 │ r_su │      │     │      │     │      │     │      │     │      │     │      │
 │ ppor │      │     │      │     │      │     │      │     │      │     │      │
 │ t.a  │      │     │      │     │      │     │      │     │      │     │      │
-│ libc │ 5813 │   9 │    9 │   0 │    0 │ 580 │   60 │   0 │ 5744 │   0 │    0 │
-│ ore. │      │     │      │     │      │   4 │      │     │      │     │      │
+│ libc │ 5801 │   9 │    9 │   0 │    0 │ 579 │   60 │   0 │ 5732 │   0 │    0 │
+│ ore. │      │     │      │     │      │   2 │      │     │      │     │      │
 │ a    │      │     │      │     │      │     │      │     │      │     │      │
 │ libe │ 5435 │  36 │    0 │  36 │    0 │ 539 │  535 │   0 │ 4864 │   0 │    0 │
 │ sp_d │      │     │      │     │      │   9 │      │     │      │     │      │

@@ -41,6 +41,6 @@ direct_dependencies:
 - espressif/esp-zigbee-lib
 - espressif/mdns
 - idf
-manifest_hash: cd7671e506c14fb88f23b7e58d8242c514498b67160073f918a2b3b8410319ab
+manifest_hash: 0a45435f2afd7f4fb8d1d9bb591eff9d93d5fa1d959bc9ef5c236d324fe0f14d
 target: esp32c6
 version: 2.0.0

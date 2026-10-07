@@ -27,6 +27,7 @@ int main() {
   CHECK(m.size() == 16);
   m.mark_unavailable(did(1));
   CHECK(m.snapshot(did(1), d) && !d.available);
+  report(m,did(1),Capability::Contact,true,4,e);CHECK(e.size==0);
   m.reset_runtime_state();
   CHECK(m.snapshot(did(1), d) && !d.values[0].known);
   report(m, did(1), Capability::Contact, true, 5, e);

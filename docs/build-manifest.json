@@ -6,8 +6,8 @@
   "flash_mb": 16,
   "ota_slot_bytes": 3145728,
   "nvs_bytes": 524288,
-  "source_commit": "f28df411f31f6c2fc0ea230adfda498b015572d2",
-  "source_dirty": true,
+  "source_commit": "9484c78cad9f1fd2adf71e4115ccbbb5952f82c9",
+  "source_dirty": false,
   "upstream_commit": "1838e5b35bfaf3cc8b328ddc044b997019533881",
   "dependencies": {
     "esp-zigbee-lib": "1.6.8",
@@ -16,12 +16,12 @@
   },
   "artifacts": {
     "zigbee_gateway.bin": {
-      "bytes": 1780256,
-      "sha256": "27150eda34365c68f011210531259a48579159cdf37817537dfb4b0b9abe130a"
+      "bytes": 1781136,
+      "sha256": "eaeff30f1638dcbcca494d25d74a8ceab9995f2452c42e3d22cc6e481c256a0c"
     },
     "bootloader/bootloader.bin": {
       "bytes": 22736,
-      "sha256": "2d259c47d2f55f1c56c8d8e220fe7aab5a68a5fc5082153ec6874b03d3a339d5"
+      "sha256": "7d16c1a76b9a78c138f2fe91b5d3dc0a5cd53880c30de26aa276522638f082d9"
     },
     "partition_table/partition-table.bin": {
       "bytes": 3072,
@@ -32,5 +32,5 @@
       "sha256": "7d2c7ac4888bfd75cd5f56e8d61f69595121183afc81556c876732fd3782c62f"
     }
   },
-  "source_content_sha256": "46ccc445120a5b38ca92489b04579680a45bffb17dccf4173be3873638bdd764"
+  "source_content_sha256": "c5b0c7a32db2e9cee5122c826647b3fb2857c39e61fd47e98489703eccb9aae0"
 }

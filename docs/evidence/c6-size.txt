@@ -2,7 +2,7 @@ Executing action: size
 Running ninja in directory /workspace/scratch/f439174bc389/zigbee-rubi-mvp/build-c6
 Executing "ninja all"...
 [1/4] cd /workspace/scratch/f439174bc389/zigbee-rubi-mvp/build-c6/esp-idf/esptool_py && /root/.espressif/python_env/idf5.5_py3.12_env/bin/python /workspace/scratch/f439174bc389/esp-idf/components/partition_table/check_sizes.py --offset 0x8000 partition --type app /workspace/scratch/f439174bc389/zigbee-rubi-mvp/build-c6/partition_table/partition-table.bin /workspace/scratch/f439174bc389/zigbee-rubi-mvp/build-c6/zigbee_gateway.bin
-zigbee_gateway.bin binary size 0x1b2a20 bytes. Smallest app partition is 0x300000 bytes. 0x14d5e0 bytes (43%) free.
+zigbee_gateway.bin binary size 0x1b2d90 bytes. Smallest app partition is 0x300000 bytes. 0x14d270 bytes (43%) free.
 [2/4] Performing build step for 'bootloader'
 [1/1] cd /workspace/scratch/f439174bc389/zigbee-rubi-mvp/build-c6/bootloader/esp-idf/esptool_py && /root/.espressif/python_env/idf5.5_py3.12_env/bin/python /workspace/scratch/f439174bc389/esp-idf/components/partition_table/check_sizes.py --offset 0x8000 bootloader 0x0 /workspace/scratch/f439174bc389/zigbee-rubi-mvp/build-c6/bootloader/bootloader.bin
 Bootloader binary size 0x58d0 bytes. 0x2730 bytes (31%) free.
@@ -16,18 +16,18 @@ Executing "ninja size"...
 ┃ Memory            ┃              ┃          ┃                ┃               ┃
 ┃ Type/Section      ┃ Used [bytes] ┃ Used [%] ┃ Remain [bytes] ┃ Total [bytes] ┃
 ┡━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━┩
-│ Flash Code        │      1645250 │          │                │               │
-│    .text          │      1349766 │          │                │               │
+│ Flash Code        │      1646130 │          │                │               │
+│    .text          │      1350646 │          │                │               │
 │    .rodata        │       295228 │          │                │               │
 │    .appdesc       │          256 │          │                │               │
-│ DIRAM             │       209958 │    46.44 │         242154 │        452112 │
+│ DIRAM             │       210086 │    46.47 │         242026 │        452112 │
 │    .text          │       117818 │    26.06 │                │               │
-│    .bss           │        75056 │     16.6 │                │               │
+│    .bss           │        75184 │    16.63 │                │               │
 │    .data          │        17084 │     3.78 │                │               │
 │ LP SRAM           │           24 │     0.15 │          16360 │         16384 │
 │    .rtc_reserved  │           24 │     0.15 │                │               │
 └───────────────────┴──────────────┴──────────┴────────────────┴───────────────┘
-Total image size: 1780152 bytes (.bin may be padded larger)
+Total image size: 1781032 bytes (.bin may be padded larger)
 Note: The reported total sizes may be smaller than those in the technical 
 reference manual due to reserved memory and application configuration. The total
 flash size available for the application is not included by default, as it 

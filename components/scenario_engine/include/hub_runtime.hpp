@@ -21,9 +21,12 @@ class HubRuntime {
     bool used = false;
     CommandAction action{};
     uint64_t deadline = 0;
+    bool sent = false;
   };
   std::array<Pending, MaxPending> pending_{};
   bool send(const CommandAction &);
+  bool submit_manual(const CommandAction &);
+  void drain_manual();
   void finish(OperationId, CommandStatus);
 
   ScenarioStore store_;

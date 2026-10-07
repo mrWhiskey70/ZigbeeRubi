@@ -1,4 +1,5 @@
 #include "hub_runtime.hpp"
+#include "scenario_event_adapter.hpp"
 #include "test_support.hpp"
 #include <map>
 #include <string>
@@ -62,12 +63,104 @@ std::string request(HubRuntime &r, const char *m, const char *p,
   cJSON_Delete(j);
   return {out.data(), n};
 }
-int main() {
+int main(int argc, char **argv) {
+  (void)argc;
+  (void)argv;
+
+  if (argc > 1) {
+    Memory storage;
+    Radio radio;
+    HubRuntime hub(storage, &radio);
+    auto d = relay();
+    d.short_addr = 0x1234;
+    CHECK(hub.configure_device(d));
+    auto contact = sensor(1, Capability::Contact);
+    contact.short_addr = 0x11;
+    CHECK(hub.configure_device(contact));
+    auto motion = sensor(2, Capability::Occupancy);
+    motion.short_addr = 0x22;
+    CHECK(hub.configure_device(motion));
+    CHECK(hub.on_report({did(1), Capability::Contact, Scalar::boolean(false)}));
+    CHECK(
+        hub.on_report({did(2), Capability::Occupancy, Scalar::boolean(false)}));
+    auto r = rule();
+    r.action_count = 3;
+    r.actions[1] = {ActionKind::Delay, {}, false, 60000};
+    r.actions[2] = {ActionKind::SetChannelPower, {did(3), 1}, false, 0};
+    if (std::string(argv[1]) == "stale" || std::string(argv[1]) == "order") {
+      r.node_count = 1;
+      r.nodes[0].kind = NodeKind::State;
+      r.nodes[0].device_id = did(1);
+      r.nodes[0].capability = Capability::Contact;
+      r.nodes[0].op = Compare::Eq;
+      r.nodes[0].expected = Scalar::boolean(false);
+    }
+    std::vector<char> json(8193);
+    size_t n = 0;
+    CHECK(encode_scenario(r, json.data(), json.size(), n));
+    CHECK(request(hub, "POST", "/api/v1/scenarios", json.data()).find("201") !=
+          std::string::npos);
+    core::CoreEvent event;
+    event.device_id = did(1);
+    event.device_short_addr = 0x11;
+    event.type = core::CoreEventType::kDeviceStale;
+    if (std::string(argv[1]) == "stale") {
+      service::forward_scenario_event(hub, event);
+      DeviceSnapshot snap;
+      CHECK(hub.device(did(1), snap));
+      CHECK(!snap.available);
+      CHECK(hub.on_report(
+          {did(2), Capability::Occupancy, Scalar::boolean(true)}));
+      CHECK(radio.sent.empty());
+      return 0;
+    }
+    if (std::string(argv[1]) == "order") {
+      event.type = core::CoreEventType::kAttributeReported;
+      event.device_id = did(2);
+      event.device_short_addr = 0x22;
+      event.cluster_id = 0x0406;
+      event.value_u32 = 1;
+      event.verified_standard_report = true;
+      service::forward_scenario_event(hub, event);
+      event.type = core::CoreEventType::kDeviceTelemetryUpdated;
+      event.device_id = did(1);
+      event.device_short_addr = 0x11;
+      event.telemetry_kind = core::CoreTelemetryKind::kContactIasZoneStatus;
+      event.telemetry_valid = true;
+      event.telemetry_i32 = 1;
+      service::forward_scenario_event(hub, event);
+      CHECK(radio.sent.size() == 1);
+      return 0;
+    }
+    CHECK(
+        hub.on_report({did(2), Capability::Occupancy, Scalar::boolean(true)}));
+    CHECK(radio.sent.size() == 1);
+    auto response = request(
+        hub, "POST", "/api/v1/channels/power",
+        "{\"device_id\":\"0000000000000003\",\"channel_id\":1,\"on\":false}");
+    CHECK(response.find("202") != std::string::npos);
+    CHECK(radio.sent.size() == 1);
+    CHECK(hub.on_report(
+        {did(3), Capability::Contact, Scalar::boolean(true), 1, true}));
+    CHECK(radio.sent.size() == 2 && !radio.sent.back().on);
+    CHECK(hub.on_report(
+        {did(3), Capability::Contact, Scalar::boolean(false), 1, true}));
+    ClockState clock;
+    clock.monotonic_ms = 60000;
+    hub.set_clock(clock);
+    hub.tick();
+    CHECK(radio.sent.size() == 2);
+    return 0;
+  }
   Memory s;
   Radio radio;
   HubRuntime r(s, &radio);
   CHECK(r.ready());
-  std::string direct; CHECK(r.handle_request_to_string("{\"method\":\"GET\",\"path\":\"/api/v1/system\",\"body\":\"\"}",direct));CHECK(direct.find("target")!=std::string::npos);
+  std::string direct;
+  CHECK(r.handle_request_to_string(
+      "{\"method\":\"GET\",\"path\":\"/api/v1/system\",\"body\":\"\"}",
+      direct));
+  CHECK(direct.find("target") != std::string::npos);
   CHECK(request(r, "GET", "/api/v1/system").find("target") !=
         std::string::npos);
   CHECK(request(r, "POST", "/api/v1/sim/advance", "{\"advance_ms\":1}")
