@@ -1,0 +1,5 @@
+[
+ {"device_id":"0000000000000001","name":"Дверь","capabilities":["contact"]},
+ {"device_id":"0000000000000002","name":"Движение","capabilities":["occupancy"]},
+ {"device_id":"0000000000000003","name":"Выключатель · 3 канала","channels":[1,2,3]}
+]

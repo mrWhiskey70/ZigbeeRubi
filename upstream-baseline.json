@@ -1,0 +1,1836 @@
+{
+  "repository": "Allekslar/zigbee-gateway_v1",
+  "commit": "1838e5b35bfaf3cc8b328ddc044b997019533881",
+  "files": [
+    {
+      "path": ".clang-tidy",
+      "imported_path": ".clang-tidy",
+      "blob_sha": "6b317a5a1deba2b2f3a0e5dbc08ff3c7076534a6"
+    },
+    {
+      "path": ".github/scripts/check_arch_invariants.sh",
+      "imported_path": ".github/scripts/check_arch_invariants.sh",
+      "blob_sha": "358e0b9a78eca7e36a87e9b44322bba7f7c32d92"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "imported_path": "docs/upstream/.github/workflows/ci.yml",
+      "blob_sha": "ee9164785870cb8dbd16f50c90fffd74cc248fb3"
+    },
+    {
+      "path": ".gitignore",
+      "imported_path": "docs/upstream/.gitignore",
+      "blob_sha": "9755115992778e69caf55128d5e052ed6db1da50"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "imported_path": "CMakeLists.txt",
+      "blob_sha": "f76b050e0ed2795afd4d93a92f337da1ea1f9ac8"
+    },
+    {
+      "path": "LICENSE",
+      "imported_path": "LICENSE",
+      "blob_sha": "be3f7b28e564e7dd05eaf59d64adba1a4065ac0e"
+    },
+    {
+      "path": "README.md",
+      "imported_path": "docs/upstream/README.md",
+      "blob_sha": "795f8e3e34a4b9c73a128c0363664549dec47192"
+    },
+    {
+      "path": "check_arch_invariants.sh",
+      "imported_path": "check_arch_invariants.sh",
+      "blob_sha": "bb4af30e9b7f4c9b5c626cf0d4c0ea84f2cc3b51"
+    },
+    {
+      "path": "cmake/ProjectCompileOptions.cmake",
+      "imported_path": "cmake/ProjectCompileOptions.cmake",
+      "blob_sha": "7a5a610afd90fddf69a06b469a1ad5ea4cdfd8aa"
+    },
+    {
+      "path": "components/app_hal/CMakeLists.txt",
+      "imported_path": "components/app_hal/CMakeLists.txt",
+      "blob_sha": "74d1edf609b8fd5bff954a9d9d6c4f7136d8f571"
+    },
+    {
+      "path": "components/app_hal/hal_led.c",
+      "imported_path": "components/app_hal/hal_led.c",
+      "blob_sha": "319a884f2325e18cb1fb0c373e47e6f8a2f6ba00"
+    },
+    {
+      "path": "components/app_hal/hal_matter.c",
+      "imported_path": "components/app_hal/hal_matter.c",
+      "blob_sha": "7e90b2d4b750d350758936fcaaecab1a187962f5"
+    },
+    {
+      "path": "components/app_hal/hal_mdns.c",
+      "imported_path": "components/app_hal/hal_mdns.c",
+      "blob_sha": "53b13eb12106c3773981fc8efa72ca4c4630e56b"
+    },
+    {
+      "path": "components/app_hal/hal_mqtt.c",
+      "imported_path": "components/app_hal/hal_mqtt.c",
+      "blob_sha": "6c61836f0f01adc090844c445dfb24031897c7e5"
+    },
+    {
+      "path": "components/app_hal/hal_nvs.c",
+      "imported_path": "components/app_hal/hal_nvs.c",
+      "blob_sha": "1e8d50c127e624b0a399d0a4d209d2241e9eb479"
+    },
+    {
+      "path": "components/app_hal/hal_ota.c",
+      "imported_path": "components/app_hal/hal_ota.c",
+      "blob_sha": "59ae9ffd12ccd6b215e01343d159de7cb2de249d"
+    },
+    {
+      "path": "components/app_hal/hal_rcp.c",
+      "imported_path": "components/app_hal/hal_rcp.c",
+      "blob_sha": "740cab087ad3a2b16a28151cfe9d2b16092b0e8e"
+    },
+    {
+      "path": "components/app_hal/hal_rcp_uart_backend.c",
+      "imported_path": "components/app_hal/hal_rcp_uart_backend.c",
+      "blob_sha": "fc9e6063d3534b6f2c6f5cf99042743279f21028"
+    },
+    {
+      "path": "components/app_hal/hal_spiffs.c",
+      "imported_path": "components/app_hal/hal_spiffs.c",
+      "blob_sha": "6540e57dd2d4ef768c126c91970a6c80ccfb7d3e"
+    },
+    {
+      "path": "components/app_hal/hal_wifi.c",
+      "imported_path": "components/app_hal/hal_wifi.c",
+      "blob_sha": "a4ac836f17cc4d8a8bf39b8966641c8a7cd16402"
+    },
+    {
+      "path": "components/app_hal/hal_zigbee.c",
+      "imported_path": "components/app_hal/hal_zigbee.c",
+      "blob_sha": "1454ea2c157091dd896b76e1c4a682f99d001e2e"
+    },
+    {
+      "path": "components/app_hal/idf_component.yml",
+      "imported_path": "components/app_hal/idf_component.yml",
+      "blob_sha": "d8ecab87bc9a578875a598bf6df16a2caf6d4b95"
+    },
+    {
+      "path": "components/app_hal/include/hal_led.h",
+      "imported_path": "components/app_hal/include/hal_led.h",
+      "blob_sha": "f9a1ac06f52b277f91dc97780404c71c612470d2"
+    },
+    {
+      "path": "components/app_hal/include/hal_matter.h",
+      "imported_path": "components/app_hal/include/hal_matter.h",
+      "blob_sha": "66c7a1f65a4c64d94654b7abaeee7bab632ce0d6"
+    },
+    {
+      "path": "components/app_hal/include/hal_mdns.h",
+      "imported_path": "components/app_hal/include/hal_mdns.h",
+      "blob_sha": "60d62d6ea110a63c09623a483498e0102b338630"
+    },
+    {
+      "path": "components/app_hal/include/hal_mqtt.h",
+      "imported_path": "components/app_hal/include/hal_mqtt.h",
+      "blob_sha": "7033f58ad492f0b5fa84e635e280669192c21492"
+    },
+    {
+      "path": "components/app_hal/include/hal_nvs.h",
+      "imported_path": "components/app_hal/include/hal_nvs.h",
+      "blob_sha": "9c2bca6082504e090ab31e578766b4aa91c0d9ee"
+    },
+    {
+      "path": "components/app_hal/include/hal_ota.h",
+      "imported_path": "components/app_hal/include/hal_ota.h",
+      "blob_sha": "e6cde94783e43cfa8ce9b8e04c4847d23c12594b"
+    },
+    {
+      "path": "components/app_hal/include/hal_rcp.h",
+      "imported_path": "components/app_hal/include/hal_rcp.h",
+      "blob_sha": "3476a0c4b271085002339386afd50a6ca311de1f"
+    },
+    {
+      "path": "components/app_hal/include/hal_spiffs.h",
+      "imported_path": "components/app_hal/include/hal_spiffs.h",
+      "blob_sha": "c94aafacffc1fa9a66492048216bcf226d06bdb8"
+    },
+    {
+      "path": "components/app_hal/include/hal_wifi.h",
+      "imported_path": "components/app_hal/include/hal_wifi.h",
+      "blob_sha": "f77eea32f295af3ac6bdd198c061041f5149ee1b"
+    },
+    {
+      "path": "components/app_hal/include/hal_zigbee.h",
+      "imported_path": "components/app_hal/include/hal_zigbee.h",
+      "blob_sha": "d0a08b81751e4d2068981571c1d571b05666eec2"
+    },
+    {
+      "path": "components/app_hal/include/hal_zigbee_test.h",
+      "imported_path": "components/app_hal/include/hal_zigbee_test.h",
+      "blob_sha": "e902bb186126549fb15463feae0fb6af0eb617ca"
+    },
+    {
+      "path": "components/app_hal/ota_release_manifest_pub.pem",
+      "imported_path": "components/app_hal/ota_release_manifest_pub.pem",
+      "blob_sha": "35ea2d6cece2c5c7e551365061fd9112ad0cf0e9"
+    },
+    {
+      "path": "components/app_hal/ota_release_manifest_pub_next.pem",
+      "imported_path": "components/app_hal/ota_release_manifest_pub_next.pem",
+      "blob_sha": "d11178b84a4b0de44a7721665efe118e736d5fa3"
+    },
+    {
+      "path": "components/app_hal/ota_server_root_ca.pem",
+      "imported_path": "components/app_hal/ota_server_root_ca.pem",
+      "blob_sha": "c19d75d97f047961f6df219f0b92e3146b687f92"
+    },
+    {
+      "path": "components/common/CMakeLists.txt",
+      "imported_path": "components/common/CMakeLists.txt",
+      "blob_sha": "7b02a307ed7bd659a7eddd4ffcbffff4249065fa"
+    },
+    {
+      "path": "components/common/include/log_tags.h",
+      "imported_path": "components/common/include/log_tags.h",
+      "blob_sha": "82e2c3b469e7a6a83655529e313e0e6acc359949"
+    },
+    {
+      "path": "components/common/include/utils.hpp",
+      "imported_path": "components/common/include/utils.hpp",
+      "blob_sha": "31178a66359fd46ee6a610f67b2eb068e9f7228b"
+    },
+    {
+      "path": "components/common/include/version.hpp",
+      "imported_path": "components/common/include/version.hpp",
+      "blob_sha": "4ca183f367128d2db5fd3c0f09901d97af70c203"
+    },
+    {
+      "path": "components/common/utils.cpp",
+      "imported_path": "components/common/utils.cpp",
+      "blob_sha": "3680d7f2af37b1b16f45696dacb237695b7ee70b"
+    },
+    {
+      "path": "components/core/CMakeLists.txt",
+      "imported_path": "components/core/CMakeLists.txt",
+      "blob_sha": "05f66dc835f9d330052ca3b3bc286a6a5343fea6"
+    },
+    {
+      "path": "components/core/core_command_dispatcher.cpp",
+      "imported_path": "components/core/core_command_dispatcher.cpp",
+      "blob_sha": "47eba144738967e2bc151d56fd9af65131b2c2ad"
+    },
+    {
+      "path": "components/core/core_event_bus.cpp",
+      "imported_path": "components/core/core_event_bus.cpp",
+      "blob_sha": "822fab9bea29d8de39b63fcac3926d280d0a5312"
+    },
+    {
+      "path": "components/core/core_reducer.cpp",
+      "imported_path": "components/core/core_reducer.cpp",
+      "blob_sha": "8a4166ea5ef8571bde11278313f4bf0ce670b995"
+    },
+    {
+      "path": "components/core/core_registry.cpp",
+      "imported_path": "components/core/core_registry.cpp",
+      "blob_sha": "ed426d6a6b9c0801386d77dc6176c5edfef009ba"
+    },
+    {
+      "path": "components/core/device_id.cpp",
+      "imported_path": "components/core/device_id.cpp",
+      "blob_sha": "cddce6e64262a8dd132e71cc4a2e34a1d5acdf83"
+    },
+    {
+      "path": "components/core/include/core_commands.hpp",
+      "imported_path": "components/core/include/core_commands.hpp",
+      "blob_sha": "e81a9bbddfa6d96f1817f71b6bc18ac92ba1ea44"
+    },
+    {
+      "path": "components/core/include/core_effects.hpp",
+      "imported_path": "components/core/include/core_effects.hpp",
+      "blob_sha": "7ba875efbaefba227de0b3a465aee217c6913231"
+    },
+    {
+      "path": "components/core/include/core_errors.hpp",
+      "imported_path": "components/core/include/core_errors.hpp",
+      "blob_sha": "7b35f59a2168a58dff01cf9687115b3c1e9b735e"
+    },
+    {
+      "path": "components/core/include/core_event_bus.hpp",
+      "imported_path": "components/core/include/core_event_bus.hpp",
+      "blob_sha": "47a26336f0b98061f601b0b9b3a09439e15a3fd3"
+    },
+    {
+      "path": "components/core/include/core_events.hpp",
+      "imported_path": "components/core/include/core_events.hpp",
+      "blob_sha": "a34d14bf117efb900a6a2395e988a0223e1c5307"
+    },
+    {
+      "path": "components/core/include/core_registry.hpp",
+      "imported_path": "components/core/include/core_registry.hpp",
+      "blob_sha": "9e298a9af134c04cc0609285cd30184f3e5b6f01"
+    },
+    {
+      "path": "components/core/include/core_state.hpp",
+      "imported_path": "components/core/include/core_state.hpp",
+      "blob_sha": "898ee0e5b324636409a848e0637a78a58d44cd7a"
+    },
+    {
+      "path": "components/core/include/device_id.hpp",
+      "imported_path": "components/core/include/device_id.hpp",
+      "blob_sha": "9f466c145ae8c447994c6833122d69e05c3602bb"
+    },
+    {
+      "path": "components/matter_bridge/CMakeLists.txt",
+      "imported_path": "components/matter_bridge/CMakeLists.txt",
+      "blob_sha": "f59f41ea998f7cbfcfbf8ae57f3304afcae71fa3"
+    },
+    {
+      "path": "components/matter_bridge/README.md",
+      "imported_path": "components/matter_bridge/README.md",
+      "blob_sha": "0e0e890a6211b305caf48960644e5e5a73af133b"
+    },
+    {
+      "path": "components/matter_bridge/include/matter_bridge.hpp",
+      "imported_path": "components/matter_bridge/include/matter_bridge.hpp",
+      "blob_sha": "bbed65aaefdab2147bd20c45ca24c02eb4c2bfb6"
+    },
+    {
+      "path": "components/matter_bridge/include/matter_endpoint_map.hpp",
+      "imported_path": "components/matter_bridge/include/matter_endpoint_map.hpp",
+      "blob_sha": "8800b42f121482226d32452154d85c5a5b82dbbc"
+    },
+    {
+      "path": "components/matter_bridge/matter_bridge.cpp",
+      "imported_path": "components/matter_bridge/matter_bridge.cpp",
+      "blob_sha": "687e340c17dbda9a947f9c421168ce450b1556af"
+    },
+    {
+      "path": "components/matter_bridge/matter_device_map.cpp",
+      "imported_path": "components/matter_bridge/matter_device_map.cpp",
+      "blob_sha": "31c99499d462bb4516390dcb23623f19718c3610"
+    },
+    {
+      "path": "components/mqtt_bridge/CMakeLists.txt",
+      "imported_path": "components/mqtt_bridge/CMakeLists.txt",
+      "blob_sha": "fb87929b0bded364825b0c6d0c31dec325d8f81e"
+    },
+    {
+      "path": "components/mqtt_bridge/include/mqtt_bridge.hpp",
+      "imported_path": "components/mqtt_bridge/include/mqtt_bridge.hpp",
+      "blob_sha": "f95b67cd2b13f0367b067fc2422d98cf4ac91b8c"
+    },
+    {
+      "path": "components/mqtt_bridge/include/mqtt_bridge_test_access.hpp",
+      "imported_path": "components/mqtt_bridge/include/mqtt_bridge_test_access.hpp",
+      "blob_sha": "8e987edcd01f370621f2f3b1f0a3825ab09eb8a9"
+    },
+    {
+      "path": "components/mqtt_bridge/include/mqtt_discovery.hpp",
+      "imported_path": "components/mqtt_bridge/include/mqtt_discovery.hpp",
+      "blob_sha": "583a62a4173cc6982f83a5b083c0b245dab330a7"
+    },
+    {
+      "path": "components/mqtt_bridge/include/mqtt_serializer.hpp",
+      "imported_path": "components/mqtt_bridge/include/mqtt_serializer.hpp",
+      "blob_sha": "0467eb14ddebd072639040054564f702eefe5fd6"
+    },
+    {
+      "path": "components/mqtt_bridge/include/mqtt_topics.hpp",
+      "imported_path": "components/mqtt_bridge/include/mqtt_topics.hpp",
+      "blob_sha": "499dce836d634934db5af07e3dab8a014bb87d08"
+    },
+    {
+      "path": "components/mqtt_bridge/mqtt_bridge.cpp",
+      "imported_path": "components/mqtt_bridge/mqtt_bridge.cpp",
+      "blob_sha": "f9984195ca298ea66ab6db67acdcddb7c0134a5c"
+    },
+    {
+      "path": "components/mqtt_bridge/mqtt_device_sync.cpp",
+      "imported_path": "components/mqtt_bridge/mqtt_device_sync.cpp",
+      "blob_sha": "92031dbcbb547f8c40ac7e09eee54c728430266e"
+    },
+    {
+      "path": "components/mqtt_bridge/mqtt_discovery.cpp",
+      "imported_path": "components/mqtt_bridge/mqtt_discovery.cpp",
+      "blob_sha": "6c2b0433c92cb09713aaee2aabfccd55cef3c33b"
+    },
+    {
+      "path": "components/mqtt_bridge/mqtt_serializer.cpp",
+      "imported_path": "components/mqtt_bridge/mqtt_serializer.cpp",
+      "blob_sha": "9b3b88ecc544b263e8f48d0cc373c2d4e4ac7921"
+    },
+    {
+      "path": "components/mqtt_bridge/mqtt_topics.cpp",
+      "imported_path": "components/mqtt_bridge/mqtt_topics.cpp",
+      "blob_sha": "cf4fe8f924fe82a361db0f1d9c1d098845c11480"
+    },
+    {
+      "path": "components/service/CMakeLists.txt",
+      "imported_path": "components/service/CMakeLists.txt",
+      "blob_sha": "e6ddb2a0b79544dd24aa982d1e88a7e38985427d"
+    },
+    {
+      "path": "components/service/application_command_mapper.cpp",
+      "imported_path": "components/service/application_command_mapper.cpp",
+      "blob_sha": "3c28b668b867a5d1b8d5acf320f59c739c03e58c"
+    },
+    {
+      "path": "components/service/bridge_snapshot_builder.cpp",
+      "imported_path": "components/service/bridge_snapshot_builder.cpp",
+      "blob_sha": "ff35335b8aa68c36e488ddc4c20d9624d9cd421a"
+    },
+    {
+      "path": "components/service/command_manager.cpp",
+      "imported_path": "components/service/command_manager.cpp",
+      "blob_sha": "f68cd9e5669434788e41ff70fa05a090da9f2efe"
+    },
+    {
+      "path": "components/service/config_manager.cpp",
+      "imported_path": "components/service/config_manager.cpp",
+      "blob_sha": "585b11bc482698cc3d7f8d796eea436833b37dc4"
+    },
+    {
+      "path": "components/service/connectivity_manager.cpp",
+      "imported_path": "components/service/connectivity_manager.cpp",
+      "blob_sha": "fb74e098635572c6cc2fb3e7b07495e4b9114ffe"
+    },
+    {
+      "path": "components/service/device_descriptor_store.cpp",
+      "imported_path": "components/service/device_descriptor_store.cpp",
+      "blob_sha": "b16eab503722d0086688c057011f6ffff757a884"
+    },
+    {
+      "path": "components/service/device_locator_registry.cpp",
+      "imported_path": "components/service/device_locator_registry.cpp",
+      "blob_sha": "b837a700c4c0e55d9dcc3d07571ec6faa11d5688"
+    },
+    {
+      "path": "components/service/device_manager.cpp",
+      "imported_path": "components/service/device_manager.cpp",
+      "blob_sha": "8a25da19ee7e6f1826195c48f906afb445148b8c"
+    },
+    {
+      "path": "components/service/devices_api_snapshot_builder.cpp",
+      "imported_path": "components/service/devices_api_snapshot_builder.cpp",
+      "blob_sha": "b4f5916aeba14463fdda35b3e89b4b128847872f"
+    },
+    {
+      "path": "components/service/effect_executor.cpp",
+      "imported_path": "components/service/effect_executor.cpp",
+      "blob_sha": "bb844938f33b59e6823935525de0a45ad264ba35"
+    },
+    {
+      "path": "components/service/hal_event_adapter.cpp",
+      "imported_path": "components/service/hal_event_adapter.cpp",
+      "blob_sha": "84c239fd5157f827de534d56091d3e919840fe2b"
+    },
+    {
+      "path": "components/service/hal_event_adapter_internal.hpp",
+      "imported_path": "components/service/hal_event_adapter_internal.hpp",
+      "blob_sha": "72463b69e6feaaf58727f4cdccb197d68ce5ed6e"
+    },
+    {
+      "path": "components/service/include/application_command_mapper.hpp",
+      "imported_path": "components/service/include/application_command_mapper.hpp",
+      "blob_sha": "c57a00a4934fbe9539f01ec36c47664db514abc6"
+    },
+    {
+      "path": "components/service/include/application_requests.hpp",
+      "imported_path": "components/service/include/application_requests.hpp",
+      "blob_sha": "f51f6ce7f4a012aff73bab730a36a1704ac07d6e"
+    },
+    {
+      "path": "components/service/include/bridge_snapshot_builder.hpp",
+      "imported_path": "components/service/include/bridge_snapshot_builder.hpp",
+      "blob_sha": "bd64b6bb113fed61aa7a70f78f64b6c32ae0251f"
+    },
+    {
+      "path": "components/service/include/command_manager.hpp",
+      "imported_path": "components/service/include/command_manager.hpp",
+      "blob_sha": "420a009cb81be4d540343febbdaac8c2e4a774fe"
+    },
+    {
+      "path": "components/service/include/config_manager.hpp",
+      "imported_path": "components/service/include/config_manager.hpp",
+      "blob_sha": "c53202abb0d67afddf7ffa5eb052390f80280eb9"
+    },
+    {
+      "path": "components/service/include/connectivity_manager.hpp",
+      "imported_path": "components/service/include/connectivity_manager.hpp",
+      "blob_sha": "b6e9ce3f01efbaf2482261937333949a0fae5574"
+    },
+    {
+      "path": "components/service/include/device_descriptor_store.hpp",
+      "imported_path": "components/service/include/device_descriptor_store.hpp",
+      "blob_sha": "e1903251ebbd630ef9d4dfcd78b89dea2b3b27c6"
+    },
+    {
+      "path": "components/service/include/device_locator_registry.hpp",
+      "imported_path": "components/service/include/device_locator_registry.hpp",
+      "blob_sha": "6252b9dac12927b739abc42d85d64d46eed3f3e1"
+    },
+    {
+      "path": "components/service/include/device_manager.hpp",
+      "imported_path": "components/service/include/device_manager.hpp",
+      "blob_sha": "baf961f7c40ddddac457f0000f71ee8c7e432987"
+    },
+    {
+      "path": "components/service/include/devices_api_snapshot_builder.hpp",
+      "imported_path": "components/service/include/devices_api_snapshot_builder.hpp",
+      "blob_sha": "acd3a8b442785c42666521acf7bd29d8ea51869b"
+    },
+    {
+      "path": "components/service/include/effect_executor.hpp",
+      "imported_path": "components/service/include/effect_executor.hpp",
+      "blob_sha": "13e584a5f9654f60282778225eee699f6a98ad95"
+    },
+    {
+      "path": "components/service/include/matter_runtime_api.hpp",
+      "imported_path": "components/service/include/matter_runtime_api.hpp",
+      "blob_sha": "8d60ca0d694746e2dd75ce32bcadc284471bb413"
+    },
+    {
+      "path": "components/service/include/network_manager.hpp",
+      "imported_path": "components/service/include/network_manager.hpp",
+      "blob_sha": "b27df20428d64117b5717583540b8598e86a24e8"
+    },
+    {
+      "path": "components/service/include/network_policy_manager.hpp",
+      "imported_path": "components/service/include/network_policy_manager.hpp",
+      "blob_sha": "d96668bb1e39b91062c7eb2c8e7cd2a19bdffdc7"
+    },
+    {
+      "path": "components/service/include/operation_result_store.hpp",
+      "imported_path": "components/service/include/operation_result_store.hpp",
+      "blob_sha": "5167c52851cd967d49ec53160a70dc188799a0df"
+    },
+    {
+      "path": "components/service/include/ota_bootstrap.hpp",
+      "imported_path": "components/service/include/ota_bootstrap.hpp",
+      "blob_sha": "094612dafd9bd0f00642fdfe30da2f868655f281"
+    },
+    {
+      "path": "components/service/include/ota_manager.hpp",
+      "imported_path": "components/service/include/ota_manager.hpp",
+      "blob_sha": "65b5b0ade2b04358e43d86230d9c7d6b6accb41a"
+    },
+    {
+      "path": "components/service/include/ota_manifest.hpp",
+      "imported_path": "components/service/include/ota_manifest.hpp",
+      "blob_sha": "61f2f8e9e4ceefab0fe33bf886b9153ba77a4b17"
+    },
+    {
+      "path": "components/service/include/ota_transport_policy.hpp",
+      "imported_path": "components/service/include/ota_transport_policy.hpp",
+      "blob_sha": "edb4d12a46de566eef22854d52c07d91a4d72151"
+    },
+    {
+      "path": "components/service/include/ota_trust_store.hpp",
+      "imported_path": "components/service/include/ota_trust_store.hpp",
+      "blob_sha": "816cc888aaef5f6eb8dcff15edf992a11700c8d5"
+    },
+    {
+      "path": "components/service/include/persistence_manager.hpp",
+      "imported_path": "components/service/include/persistence_manager.hpp",
+      "blob_sha": "c930082c4bd0d0f9422237703426490a70321f13"
+    },
+    {
+      "path": "components/service/include/rcp_transport_policy.hpp",
+      "imported_path": "components/service/include/rcp_transport_policy.hpp",
+      "blob_sha": "e7613fe3ccb1c9871fc213793c1ce87175d6b9eb"
+    },
+    {
+      "path": "components/service/include/rcp_update_manager.hpp",
+      "imported_path": "components/service/include/rcp_update_manager.hpp",
+      "blob_sha": "c4fbe7eb2e7ecd1fcaa2cb2c2db18086c26242a0"
+    },
+    {
+      "path": "components/service/include/read_model_coordinator.hpp",
+      "imported_path": "components/service/include/read_model_coordinator.hpp",
+      "blob_sha": "2201f8b1eb23988623d707745cbaf2111ee2b058"
+    },
+    {
+      "path": "components/service/include/reporting_manager.hpp",
+      "imported_path": "components/service/include/reporting_manager.hpp",
+      "blob_sha": "89e8ed7746768688edb8d7a628a9a02adf4e8c0e"
+    },
+    {
+      "path": "components/service/include/runtime_lock.hpp",
+      "imported_path": "components/service/include/runtime_lock.hpp",
+      "blob_sha": "86d6f786ddaf8f12aa9d97786a454eca08b2d50e"
+    },
+    {
+      "path": "components/service/include/scan_manager.hpp",
+      "imported_path": "components/service/include/scan_manager.hpp",
+      "blob_sha": "73bb7d52ffd1eb86e8227dc9aba7b3ae21bdf578"
+    },
+    {
+      "path": "components/service/include/service_public_types.hpp",
+      "imported_path": "components/service/include/service_public_types.hpp",
+      "blob_sha": "7f2e7809dbb81d57af2611ecef45d97411dfbaa5"
+    },
+    {
+      "path": "components/service/include/service_runtime.hpp",
+      "imported_path": "components/service/include/service_runtime.hpp",
+      "blob_sha": "dd7e9dacc1e285b6bc836a06d3b40d7f9e9b2cca"
+    },
+    {
+      "path": "components/service/include/service_runtime_api.hpp",
+      "imported_path": "components/service/include/service_runtime_api.hpp",
+      "blob_sha": "9a297dcd0786232b989be4ce17ad7cdba633cd45"
+    },
+    {
+      "path": "components/service/include/service_runtime_test_access.hpp",
+      "imported_path": "components/service/include/service_runtime_test_access.hpp",
+      "blob_sha": "5504809ca4d39272ab3ecae45e582d6f51f9d450"
+    },
+    {
+      "path": "components/service/include/state_persistence_coordinator.hpp",
+      "imported_path": "components/service/include/state_persistence_coordinator.hpp",
+      "blob_sha": "715722afb28f6c04d60997d442331523b701ff27"
+    },
+    {
+      "path": "components/service/include/tuya_contact_sensor_plugin.hpp",
+      "imported_path": "components/service/include/tuya_contact_sensor_plugin.hpp",
+      "blob_sha": "c9190189dff7f2a12af8f2538d3ba2da438556e1"
+    },
+    {
+      "path": "components/service/include/tuya_dp_parser.hpp",
+      "imported_path": "components/service/include/tuya_dp_parser.hpp",
+      "blob_sha": "9766a43530877111f2e0f4282525560501d6df7c"
+    },
+    {
+      "path": "components/service/include/tuya_fingerprint.hpp",
+      "imported_path": "components/service/include/tuya_fingerprint.hpp",
+      "blob_sha": "9b336d68d280a3d6b4db30d5ebeebd2f2ab4f387"
+    },
+    {
+      "path": "components/service/include/tuya_init_coordinator.hpp",
+      "imported_path": "components/service/include/tuya_init_coordinator.hpp",
+      "blob_sha": "cc1cf47e4ff74437b3f3ab1ff7d04837037e9807"
+    },
+    {
+      "path": "components/service/include/tuya_payload_view.hpp",
+      "imported_path": "components/service/include/tuya_payload_view.hpp",
+      "blob_sha": "12bd362be5e519d763ae96ec7a7b9353c8c63921"
+    },
+    {
+      "path": "components/service/include/tuya_plugin.hpp",
+      "imported_path": "components/service/include/tuya_plugin.hpp",
+      "blob_sha": "aeac99a3d854d0c7e3726ab1e75cec203f7cade0"
+    },
+    {
+      "path": "components/service/include/tuya_plugin_registry.hpp",
+      "imported_path": "components/service/include/tuya_plugin_registry.hpp",
+      "blob_sha": "55e626c9cd70530b65185219f5c6607280ffcad8"
+    },
+    {
+      "path": "components/service/include/tuya_switch_plugin.hpp",
+      "imported_path": "components/service/include/tuya_switch_plugin.hpp",
+      "blob_sha": "92328e5db3ddcf391253c39ed483363a4d54fe9e"
+    },
+    {
+      "path": "components/service/include/tuya_translator.hpp",
+      "imported_path": "components/service/include/tuya_translator.hpp",
+      "blob_sha": "4975769c7eeba7451be22d90f4c9078bf066ec26"
+    },
+    {
+      "path": "components/service/include/zigbee_lifecycle_coordinator.hpp",
+      "imported_path": "components/service/include/zigbee_lifecycle_coordinator.hpp",
+      "blob_sha": "0187e5b005b9c0cffdb1514dcffdf23071a69602"
+    },
+    {
+      "path": "components/service/network_manager.cpp",
+      "imported_path": "components/service/network_manager.cpp",
+      "blob_sha": "df73e141fa363649778ca310a5b11d1295c51e08"
+    },
+    {
+      "path": "components/service/network_policy_manager.cpp",
+      "imported_path": "components/service/network_policy_manager.cpp",
+      "blob_sha": "5e547f2ff667f0ea4fa3afb20d05de25055b82e4"
+    },
+    {
+      "path": "components/service/operation_result_store.cpp",
+      "imported_path": "components/service/operation_result_store.cpp",
+      "blob_sha": "3b2ee056cd554027753598295576ba88283a644a"
+    },
+    {
+      "path": "components/service/ota_bootstrap.cpp",
+      "imported_path": "components/service/ota_bootstrap.cpp",
+      "blob_sha": "52bdb17fe266750dfed56846da7c49a6c80ee747"
+    },
+    {
+      "path": "components/service/ota_manager.cpp",
+      "imported_path": "components/service/ota_manager.cpp",
+      "blob_sha": "addba70187e09747b0d5409b4e63d9c9c2f85d53"
+    },
+    {
+      "path": "components/service/ota_manifest.cpp",
+      "imported_path": "components/service/ota_manifest.cpp",
+      "blob_sha": "1fc57fc3342bb10582606bbc190acb4312193d77"
+    },
+    {
+      "path": "components/service/ota_transport_policy.cpp",
+      "imported_path": "components/service/ota_transport_policy.cpp",
+      "blob_sha": "b3a7a24e70a99311e50e4008243da5e84c317244"
+    },
+    {
+      "path": "components/service/ota_trust_store.cpp",
+      "imported_path": "components/service/ota_trust_store.cpp",
+      "blob_sha": "6fcfd363debcf50165afcb0b900d61f066c88348"
+    },
+    {
+      "path": "components/service/persistence_manager.cpp",
+      "imported_path": "components/service/persistence_manager.cpp",
+      "blob_sha": "624562fa2200aaf794e6fb52568dc499ce9d0798"
+    },
+    {
+      "path": "components/service/rcp_transport_policy.cpp",
+      "imported_path": "components/service/rcp_transport_policy.cpp",
+      "blob_sha": "873067a3c0a356adb1ba4920a92539cf4ae134b0"
+    },
+    {
+      "path": "components/service/rcp_update_manager.cpp",
+      "imported_path": "components/service/rcp_update_manager.cpp",
+      "blob_sha": "21a3b17451aecba60324a8e1d88dad17f55380b3"
+    },
+    {
+      "path": "components/service/read_model_coordinator.cpp",
+      "imported_path": "components/service/read_model_coordinator.cpp",
+      "blob_sha": "1eb33ab8fdc69e1fadd6c90f9eb538d2acd67ff2"
+    },
+    {
+      "path": "components/service/reporting_manager.cpp",
+      "imported_path": "components/service/reporting_manager.cpp",
+      "blob_sha": "92817343bdbcb0d2054ca53c731047f16c1b9342"
+    },
+    {
+      "path": "components/service/scan_manager.cpp",
+      "imported_path": "components/service/scan_manager.cpp",
+      "blob_sha": "a7275dcb84d71a0536e1b71ed4a600ee053f3f59"
+    },
+    {
+      "path": "components/service/service_runtime.cpp",
+      "imported_path": "components/service/service_runtime.cpp",
+      "blob_sha": "c8fe5924ad9f858741cd1c23e40a907c28050981"
+    },
+    {
+      "path": "components/service/state_persistence_coordinator.cpp",
+      "imported_path": "components/service/state_persistence_coordinator.cpp",
+      "blob_sha": "756e86dd05fba99366c03e230912348f889ec8ae"
+    },
+    {
+      "path": "components/service/tuya_contact_sensor_plugin.cpp",
+      "imported_path": "components/service/tuya_contact_sensor_plugin.cpp",
+      "blob_sha": "d04beec6cd822fd46756052a50f6d07710d9fb95"
+    },
+    {
+      "path": "components/service/tuya_dp_parser.cpp",
+      "imported_path": "components/service/tuya_dp_parser.cpp",
+      "blob_sha": "316829eff18008cd1faf4b0a9caec4cd4950987e"
+    },
+    {
+      "path": "components/service/tuya_fingerprint.cpp",
+      "imported_path": "components/service/tuya_fingerprint.cpp",
+      "blob_sha": "f73f3b3c58dea3241234b234107a7ea8260fda69"
+    },
+    {
+      "path": "components/service/tuya_init_coordinator.cpp",
+      "imported_path": "components/service/tuya_init_coordinator.cpp",
+      "blob_sha": "6e78d136266ef3b8a2cdc375d0a9943f9de67509"
+    },
+    {
+      "path": "components/service/tuya_plugin_registry.cpp",
+      "imported_path": "components/service/tuya_plugin_registry.cpp",
+      "blob_sha": "08fd981b3f80513a5210fbf321228347fe2450c0"
+    },
+    {
+      "path": "components/service/tuya_switch_plugin.cpp",
+      "imported_path": "components/service/tuya_switch_plugin.cpp",
+      "blob_sha": "ce9c9a937b1712fec1b5de259ee762ee6f74ccd7"
+    },
+    {
+      "path": "components/service/tuya_translator.cpp",
+      "imported_path": "components/service/tuya_translator.cpp",
+      "blob_sha": "28b64e5d0294cc11cc7caf5a05c2ef707a276b41"
+    },
+    {
+      "path": "components/service/zigbee_lifecycle_coordinator.cpp",
+      "imported_path": "components/service/zigbee_lifecycle_coordinator.cpp",
+      "blob_sha": "0fdfb1dbc1809e7ba22c3f261cd3020825153edf"
+    },
+    {
+      "path": "components/web_ui/CMakeLists.txt",
+      "imported_path": "components/web_ui/CMakeLists.txt",
+      "blob_sha": "66501e7e8bc259f8907bb345e7223f0a15cca95c"
+    },
+    {
+      "path": "components/web_ui/assets/app.js",
+      "imported_path": "components/web_ui/assets/app.js",
+      "blob_sha": "c7a5238b891a66af47ca55be61a62375b08bc15a"
+    },
+    {
+      "path": "components/web_ui/assets/index.html",
+      "imported_path": "components/web_ui/assets/index.html",
+      "blob_sha": "755dfe5006a57a81a64b47cc4cea52c2f389a4a3"
+    },
+    {
+      "path": "components/web_ui/assets/style.css",
+      "imported_path": "components/web_ui/assets/style.css",
+      "blob_sha": "62e8bd93a84c08e63d7a25be2f94f4bfd7fb693c"
+    },
+    {
+      "path": "components/web_ui/include/web_dto.hpp",
+      "imported_path": "components/web_ui/include/web_dto.hpp",
+      "blob_sha": "ceef7815d9f197ad3c109f49c9f7d13e0e5a1363"
+    },
+    {
+      "path": "components/web_ui/include/web_routes.hpp",
+      "imported_path": "components/web_ui/include/web_routes.hpp",
+      "blob_sha": "7ac267f5a3701651997481eaa921e1f1893a8fc5"
+    },
+    {
+      "path": "components/web_ui/include/web_server.hpp",
+      "imported_path": "components/web_ui/include/web_server.hpp",
+      "blob_sha": "c88ff1b1ceabd9ac1eaceb040ef1f77d55d7c30f"
+    },
+    {
+      "path": "components/web_ui/web_handler_common.cpp",
+      "imported_path": "components/web_ui/web_handler_common.cpp",
+      "blob_sha": "adf366fa10b03c67ed407242bec2eff5db5aa25a"
+    },
+    {
+      "path": "components/web_ui/web_handler_common.hpp",
+      "imported_path": "components/web_ui/web_handler_common.hpp",
+      "blob_sha": "b8119ccc1d4707a2043f33bdf81f4c4c49f5f606"
+    },
+    {
+      "path": "components/web_ui/web_handlers_config.cpp",
+      "imported_path": "components/web_ui/web_handlers_config.cpp",
+      "blob_sha": "972d7509e80f7c450ee9bdda23407dbbeb0596ce"
+    },
+    {
+      "path": "components/web_ui/web_handlers_device.cpp",
+      "imported_path": "components/web_ui/web_handlers_device.cpp",
+      "blob_sha": "8c6867e1828c8faf2c89e8bdc814c3edf949aac6"
+    },
+    {
+      "path": "components/web_ui/web_handlers_network.cpp",
+      "imported_path": "components/web_ui/web_handlers_network.cpp",
+      "blob_sha": "cecd13e5982b256b9a521e3dc78a903410b04235"
+    },
+    {
+      "path": "components/web_ui/web_handlers_ota.cpp",
+      "imported_path": "components/web_ui/web_handlers_ota.cpp",
+      "blob_sha": "6008c7b036d32b587806a0c1c7dd7527b5a5b311"
+    },
+    {
+      "path": "components/web_ui/web_handlers_rcp.cpp",
+      "imported_path": "components/web_ui/web_handlers_rcp.cpp",
+      "blob_sha": "96a23387d91687a1577cfcbc5846a19e0064c870"
+    },
+    {
+      "path": "components/web_ui/web_handlers_static.cpp",
+      "imported_path": "components/web_ui/web_handlers_static.cpp",
+      "blob_sha": "14d105e067d342295ffc486fea8c4dd476b4c008"
+    },
+    {
+      "path": "components/web_ui/web_routes.cpp",
+      "imported_path": "components/web_ui/web_routes.cpp",
+      "blob_sha": "eb75d8d0e5c64f876c1cc0d820600a03bdba1360"
+    },
+    {
+      "path": "components/web_ui/web_server.cpp",
+      "imported_path": "components/web_ui/web_server.cpp",
+      "blob_sha": "ef6b3c2c7f48b609bb78365f78b4c9a8dc93323b"
+    },
+    {
+      "path": "coverage-report/index.config_manager.cpp.aaec25b9253129fa8322e6cf47258a31.html",
+      "imported_path": "coverage-report/index.config_manager.cpp.aaec25b9253129fa8322e6cf47258a31.html",
+      "blob_sha": "4e66650ff10d9a1a3eb42a4bea1c4fdbd694c6db"
+    },
+    {
+      "path": "coverage-report/index.core_command_dispatcher.cpp.86c1aec31429c6a67e69f21d2e284381.html",
+      "imported_path": "coverage-report/index.core_command_dispatcher.cpp.86c1aec31429c6a67e69f21d2e284381.html",
+      "blob_sha": "9e0e91ea8d58213f44bf14c245be716b31d20fab"
+    },
+    {
+      "path": "coverage-report/index.core_event_bus.cpp.8244f1fada9c13c650ce46b643523bbc.html",
+      "imported_path": "coverage-report/index.core_event_bus.cpp.8244f1fada9c13c650ce46b643523bbc.html",
+      "blob_sha": "70ea0b4b53ece00e3680d6404c947e6b7c41251c"
+    },
+    {
+      "path": "coverage-report/index.core_reducer.cpp.5274544016cea924447bc0d0ed37af29.html",
+      "imported_path": "coverage-report/index.core_reducer.cpp.5274544016cea924447bc0d0ed37af29.html",
+      "blob_sha": "80b994657a9298f38be45c883f92837a5a1dfdde"
+    },
+    {
+      "path": "coverage-report/index.core_registry.cpp.841c72d1206bbfaf295e016268e7add2.html",
+      "imported_path": "coverage-report/index.core_registry.cpp.841c72d1206bbfaf295e016268e7add2.html",
+      "blob_sha": "3b7d8ed46c9ba64e424d122e4c0f89896feefcf8"
+    },
+    {
+      "path": "coverage-report/index.core_registry.hpp.25da16ea28e63fae9ed2a5c3b4db1c89.html",
+      "imported_path": "coverage-report/index.core_registry.hpp.25da16ea28e63fae9ed2a5c3b4db1c89.html",
+      "blob_sha": "c72c2c81d33c8468f5b1fbf125bffccb46ff660d"
+    },
+    {
+      "path": "coverage-report/index.core_state.hpp.d8476f50a27afb0a5e255d82eb483f32.html",
+      "imported_path": "coverage-report/index.core_state.hpp.d8476f50a27afb0a5e255d82eb483f32.html",
+      "blob_sha": "49a81244d854cf125c0858817e4f5be7a9f5ccc6"
+    },
+    {
+      "path": "coverage-report/index.css",
+      "imported_path": "coverage-report/index.css",
+      "blob_sha": "6b6c4e9de0f211a36d4754cb6c9482ddba9c5944"
+    },
+    {
+      "path": "coverage-report/index.effect_executor.cpp.abd915609dbf03f49f44cd56192a0b0d.html",
+      "imported_path": "coverage-report/index.effect_executor.cpp.abd915609dbf03f49f44cd56192a0b0d.html",
+      "blob_sha": "855c4ecf5a37fd7e14475c883fe5f8cf280f863a"
+    },
+    {
+      "path": "coverage-report/index.functions.html",
+      "imported_path": "coverage-report/index.functions.html",
+      "blob_sha": "9f67331045581c88f4d78ab5b0422a6b4cc0a1c7"
+    },
+    {
+      "path": "coverage-report/index.hal_event_adapter.cpp.4ae5f158ea57206bc57357ea39e22245.html",
+      "imported_path": "coverage-report/index.hal_event_adapter.cpp.4ae5f158ea57206bc57357ea39e22245.html",
+      "blob_sha": "cea260205e35b1a718563125e50d48e7eece0a69"
+    },
+    {
+      "path": "coverage-report/index.html",
+      "imported_path": "coverage-report/index.html",
+      "blob_sha": "01bef54b2340856cbc5ec1ece6e8ac8be0f5f06e"
+    },
+    {
+      "path": "coverage-report/index.service_runtime.cpp.5a16d2025cae707eeab5c88636b7c8b1.html",
+      "imported_path": "coverage-report/index.service_runtime.cpp.5a16d2025cae707eeab5c88636b7c8b1.html",
+      "blob_sha": "22995f0118e34b6c390b5b54f92c724f801da3e4"
+    },
+    {
+      "path": "dependencies.lock",
+      "imported_path": "dependencies.lock",
+      "blob_sha": "d008d32fa282c2f06136f999db1992b8c7fdd2a8"
+    },
+    {
+      "path": "docs/architecture/ADR_EXCEPTIONS.md",
+      "imported_path": "docs/architecture/ADR_EXCEPTIONS.md",
+      "blob_sha": "68bb07fe7672bc1cb9f2cb9884569433d0d4c009"
+    },
+    {
+      "path": "docs/architecture/ARCHITECTURE.md",
+      "imported_path": "docs/architecture/ARCHITECTURE.md",
+      "blob_sha": "f7a54c04ab510f7754f34ee7f15c97f1742a487f"
+    },
+    {
+      "path": "docs/architecture/ARCH_COMPLIANCE_MATRIX.md",
+      "imported_path": "docs/architecture/ARCH_COMPLIANCE_MATRIX.md",
+      "blob_sha": "01970d4a645ba927d9790293c32c2fd002c302de"
+    },
+    {
+      "path": "docs/architecture/CODING_GUIDELINES.md",
+      "imported_path": "docs/architecture/CODING_GUIDELINES.md",
+      "blob_sha": "5029a35073657a5378f58c4be16b1a736bd8358d"
+    },
+    {
+      "path": "docs/architecture/DEVICE_IDENTITY.md",
+      "imported_path": "docs/architecture/DEVICE_IDENTITY.md",
+      "blob_sha": "48d0bbc9b1abb8428cd83e8da8121b5ac4d56702"
+    },
+    {
+      "path": "docs/implementation/OTA_Implementation.md",
+      "imported_path": "docs/implementation/OTA_Implementation.md",
+      "blob_sha": "0ad9dff6018df45aab5812c85fd830ea4c33d0e0"
+    },
+    {
+      "path": "docs/implementation/PRODUCTION_HARDENING_PLAN.md",
+      "imported_path": "docs/implementation/PRODUCTION_HARDENING_PLAN.md",
+      "blob_sha": "d97d2141fc47891d8d694c6634d14fe43924e107"
+    },
+    {
+      "path": "docs/implementation/RCP.md",
+      "imported_path": "docs/implementation/RCP.md",
+      "blob_sha": "6ffb7e211b74cf8d0b8cd52c42156efa0908989f"
+    },
+    {
+      "path": "docs/implementation/Tuya_Implementation.md",
+      "imported_path": "docs/implementation/Tuya_Implementation.md",
+      "blob_sha": "d0863b3b727453b42729e96e947375c45bf873f8"
+    },
+    {
+      "path": "docs/implementation/Tuya_Implementation_Architecture.svg",
+      "imported_path": "docs/implementation/Tuya_Implementation_Architecture.svg",
+      "blob_sha": "6045d5fe78e3dcd284964db7c89f672afb278633"
+    },
+    {
+      "path": "docs/process/TEAM_WORKFLOW.md",
+      "imported_path": "docs/process/TEAM_WORKFLOW.md",
+      "blob_sha": "3474fad242d477bea9b47976655a33e657740580"
+    },
+    {
+      "path": "docs/releases/OTA_RELEASE.md",
+      "imported_path": "docs/releases/OTA_RELEASE.md",
+      "blob_sha": "77dd1a7c32911f77ab16f287284244812edef664"
+    },
+    {
+      "path": "implementation-evidence/S0-baseline.json",
+      "imported_path": "implementation-evidence/S0-baseline.json",
+      "blob_sha": "0675bc2815f0c00fb1049c5295b50f44ff32c045"
+    },
+    {
+      "path": "implementation-evidence/S0-completion.json",
+      "imported_path": "implementation-evidence/S0-completion.json",
+      "blob_sha": "096a75e5f7976857c3269510905a22f8b29564da"
+    },
+    {
+      "path": "implementation-evidence/S1-completion.json",
+      "imported_path": "implementation-evidence/S1-completion.json",
+      "blob_sha": "4ca4e1d6a8bd30b6779611de1304269666ee3348"
+    },
+    {
+      "path": "implementation-evidence/S2-completion.json",
+      "imported_path": "implementation-evidence/S2-completion.json",
+      "blob_sha": "f874e5f38d5c6a0d30a39a50dbbe5aed835b1a38"
+    },
+    {
+      "path": "implementation-evidence/_summary.txt",
+      "imported_path": "implementation-evidence/_summary.txt",
+      "blob_sha": "ff98cc9e163006ab322916f7c45cde221e354a6f"
+    },
+    {
+      "path": "implementation-evidence/current-repository-inventory.json",
+      "imported_path": "implementation-evidence/current-repository-inventory.json",
+      "blob_sha": "8d771fa35401950f1cc4ec8108869b895b9e9726"
+    },
+    {
+      "path": "implementation-evidence/git-baseline.json",
+      "imported_path": "implementation-evidence/git-baseline.json",
+      "blob_sha": "3747b43e54b68667144c8d8079b96f75f47f9e9b"
+    },
+    {
+      "path": "main/CMakeLists.txt",
+      "imported_path": "main/CMakeLists.txt",
+      "blob_sha": "588c916694a190cd163bfd8619f9aa59fe945045"
+    },
+    {
+      "path": "main/Kconfig.projbuild",
+      "imported_path": "main/Kconfig.projbuild",
+      "blob_sha": "6902b3ba20c82dffd67cd43ebb5d8a3319e17011"
+    },
+    {
+      "path": "main/app_main.cpp",
+      "imported_path": "main/app_main.cpp",
+      "blob_sha": "ff468b6135b5855294f8e04f13c771c3dead74f3"
+    },
+    {
+      "path": "main/idf_component.yml",
+      "imported_path": "main/idf_component.yml",
+      "blob_sha": "d611d31e5684516ce72fd67c351558bd605b25df"
+    },
+    {
+      "path": "partitions.csv",
+      "imported_path": "partitions.csv",
+      "blob_sha": "d65e47b8d3ddcc2196aa444bb8b7ce2cb2201aa3"
+    },
+    {
+      "path": "planning/github_issues/reporting/README.md",
+      "imported_path": "planning/github_issues/reporting/README.md",
+      "blob_sha": "ccf2938c7cb60725f1cf6d56395d735a52911c50"
+    },
+    {
+      "path": "planning/github_issues/reporting/RPT-001.md",
+      "imported_path": "planning/github_issues/reporting/RPT-001.md",
+      "blob_sha": "3c03f336052f01842ad57094397dc165dfd1286f"
+    },
+    {
+      "path": "planning/github_issues/reporting/RPT-002.md",
+      "imported_path": "planning/github_issues/reporting/RPT-002.md",
+      "blob_sha": "63b317e522167fe7ae416edadbce56e972eacbba"
+    },
+    {
+      "path": "planning/github_issues/reporting/RPT-003.md",
+      "imported_path": "planning/github_issues/reporting/RPT-003.md",
+      "blob_sha": "d586a3ee5de81b640f89a404c163602786771a30"
+    },
+    {
+      "path": "planning/github_issues/reporting/RPT-004.md",
+      "imported_path": "planning/github_issues/reporting/RPT-004.md",
+      "blob_sha": "8ca7c0cd0a10104a2febe5953392f11f1596ec52"
+    },
+    {
+      "path": "planning/github_issues/reporting/RPT-005.md",
+      "imported_path": "planning/github_issues/reporting/RPT-005.md",
+      "blob_sha": "a24d454888538fdb6fd0bdb59582eeabeb554d94"
+    },
+    {
+      "path": "planning/github_issues/reporting/RPT-006.md",
+      "imported_path": "planning/github_issues/reporting/RPT-006.md",
+      "blob_sha": "5ce34664be4a9b793a74c42ce3d2bbbfabe16368"
+    },
+    {
+      "path": "planning/github_issues/reporting/RPT-007.md",
+      "imported_path": "planning/github_issues/reporting/RPT-007.md",
+      "blob_sha": "57aff86f0882f310b75e132900c861476a4c24b0"
+    },
+    {
+      "path": "planning/github_issues/reporting/RPT-008.md",
+      "imported_path": "planning/github_issues/reporting/RPT-008.md",
+      "blob_sha": "584140a0516a90fd0f44ce7b33dfadf66322d579"
+    },
+    {
+      "path": "planning/github_issues/reporting/RPT-009.md",
+      "imported_path": "planning/github_issues/reporting/RPT-009.md",
+      "blob_sha": "15d381e45df501a6dd7074f59eaef15b66ec56d3"
+    },
+    {
+      "path": "planning/github_issues/reporting/RPT-010.md",
+      "imported_path": "planning/github_issues/reporting/RPT-010.md",
+      "blob_sha": "6f425c34391db2e7e0493087d58128b56390aa05"
+    },
+    {
+      "path": "planning/github_issues/reporting/RPT-011.md",
+      "imported_path": "planning/github_issues/reporting/RPT-011.md",
+      "blob_sha": "bb389de53c2ddf5c5f1609a3c5b64efa646c8a7a"
+    },
+    {
+      "path": "planning/github_issues/reporting/RPT-012.md",
+      "imported_path": "planning/github_issues/reporting/RPT-012.md",
+      "blob_sha": "a18450f6563689e3ad7c39cb83107862109d6f77"
+    },
+    {
+      "path": "planning/github_issues/reporting/RPT-013.md",
+      "imported_path": "planning/github_issues/reporting/RPT-013.md",
+      "blob_sha": "11f00833e927ba5079dc72b83e0b5beccebd159f"
+    },
+    {
+      "path": "planning/github_issues/reporting/RPT-014.md",
+      "imported_path": "planning/github_issues/reporting/RPT-014.md",
+      "blob_sha": "8a06c321fc23395d0fceaabb3001c3db1fd24515"
+    },
+    {
+      "path": "planning/github_issues/reporting/RPT-015.md",
+      "imported_path": "planning/github_issues/reporting/RPT-015.md",
+      "blob_sha": "7d9435a6ca67c0a011d556bc3e0796849668e657"
+    },
+    {
+      "path": "planning/github_issues/reporting/RPT-016.md",
+      "imported_path": "planning/github_issues/reporting/RPT-016.md",
+      "blob_sha": "73e4cee94578eb9f1efdd0de7c54da40fc2e83c4"
+    },
+    {
+      "path": "planning/github_issues/reporting/RPT-017.md",
+      "imported_path": "planning/github_issues/reporting/RPT-017.md",
+      "blob_sha": "0bdea65cec5a9f45f4495cdc1ba46b8380beb035"
+    },
+    {
+      "path": "planning/github_issues/reporting/RPT-018.md",
+      "imported_path": "planning/github_issues/reporting/RPT-018.md",
+      "blob_sha": "ee47635093e06e7e6686a113df2e64f7dbae62d0"
+    },
+    {
+      "path": "planning/github_issues/reporting/RPT-019.md",
+      "imported_path": "planning/github_issues/reporting/RPT-019.md",
+      "blob_sha": "cc25f1ee8e40b81912f020b1eb953c18061f6812"
+    },
+    {
+      "path": "planning/github_issues/reporting/RPT-020.md",
+      "imported_path": "planning/github_issues/reporting/RPT-020.md",
+      "blob_sha": "f011e73c1664f939787405b236ca8c84ed003d46"
+    },
+    {
+      "path": "planning/github_issues/reporting/RPT-021.md",
+      "imported_path": "planning/github_issues/reporting/RPT-021.md",
+      "blob_sha": "be6511fa0e9ca36c415d08a98b8d0f48791d194e"
+    },
+    {
+      "path": "planning/github_issues/reporting/RPT-022.md",
+      "imported_path": "planning/github_issues/reporting/RPT-022.md",
+      "blob_sha": "77196a438d4e11adbfae63128ca7b217dff45dd1"
+    },
+    {
+      "path": "planning/github_issues/reporting/RPT-023.md",
+      "imported_path": "planning/github_issues/reporting/RPT-023.md",
+      "blob_sha": "1c7247fbe9d45ad415cccfaead4ea19d1dd1037f"
+    },
+    {
+      "path": "planning/github_issues/reporting/RPT-024.md",
+      "imported_path": "planning/github_issues/reporting/RPT-024.md",
+      "blob_sha": "87da91c282a4527e6b4c4bb1f497938b8e98090e"
+    },
+    {
+      "path": "planning/github_issues/reporting/RPT-025.md",
+      "imported_path": "planning/github_issues/reporting/RPT-025.md",
+      "blob_sha": "14ae93865caad81f4ba11c113435f536789daa4e"
+    },
+    {
+      "path": "planning/github_issues/reporting/RPT-026.md",
+      "imported_path": "planning/github_issues/reporting/RPT-026.md",
+      "blob_sha": "7f3206e503200073bc6a05fa9594782e01866274"
+    },
+    {
+      "path": "planning/github_issues/reporting/RPT-027.md",
+      "imported_path": "planning/github_issues/reporting/RPT-027.md",
+      "blob_sha": "d66c6ac2e2490ed4a70aacba9a3c436bb2f6d2f0"
+    },
+    {
+      "path": "planning/github_issues/reporting/RPT-028.md",
+      "imported_path": "planning/github_issues/reporting/RPT-028.md",
+      "blob_sha": "42e8e6b1cac316ea34c463d6735e7ef8aa352f74"
+    },
+    {
+      "path": "planning/github_issues/reporting/RPT-029.md",
+      "imported_path": "planning/github_issues/reporting/RPT-029.md",
+      "blob_sha": "a6752d256d75638bd9203be1a47112ca2d0b3b61"
+    },
+    {
+      "path": "planning/github_issues/reporting/RPT-030.md",
+      "imported_path": "planning/github_issues/reporting/RPT-030.md",
+      "blob_sha": "a67fd1ca51ec7eff0d258cb483c92b92d6a6ecec"
+    },
+    {
+      "path": "planning/github_issues/reporting/RPT-031.md",
+      "imported_path": "planning/github_issues/reporting/RPT-031.md",
+      "blob_sha": "157e105e794fb9c11ae0e1b4037a8e7e834f984b"
+    },
+    {
+      "path": "planning/github_issues/reporting/RPT-032.md",
+      "imported_path": "planning/github_issues/reporting/RPT-032.md",
+      "blob_sha": "b0b5ca3ad7d5e733a00385601f98cdb665c2147a"
+    },
+    {
+      "path": "planning/github_issues/reporting/RPT-033.md",
+      "imported_path": "planning/github_issues/reporting/RPT-033.md",
+      "blob_sha": "e6352c0dae0c7a04314ac2d967e1c41d9824e57f"
+    },
+    {
+      "path": "planning/github_issues/reporting/RPT-034.md",
+      "imported_path": "planning/github_issues/reporting/RPT-034.md",
+      "blob_sha": "b50ffaae77a111b82103f1d9c768b656ac4a0406"
+    },
+    {
+      "path": "planning/github_issues/reporting/create_issues.sh",
+      "imported_path": "planning/github_issues/reporting/create_issues.sh",
+      "blob_sha": "b85a75f0ccc5157af80a06b13e4468df9f6d133a"
+    },
+    {
+      "path": "scripts/check_ota_slot_size.sh",
+      "imported_path": "scripts/check_ota_slot_size.sh",
+      "blob_sha": "96d00beb9eddc40c65153f65d91660c402f26dca"
+    },
+    {
+      "path": "scripts/check_ota_trust_config.sh",
+      "imported_path": "scripts/check_ota_trust_config.sh",
+      "blob_sha": "5a759f0efbd60f0c050ac129bdc5d7d0f17b44b0"
+    },
+    {
+      "path": "scripts/generate_ota_manifest.py",
+      "imported_path": "scripts/generate_ota_manifest.py",
+      "blob_sha": "dab1257c2b40944e92fad9ccd8fa7c2fa628f713"
+    },
+    {
+      "path": "scripts/gzip_asset.py",
+      "imported_path": "scripts/gzip_asset.py",
+      "blob_sha": "27fa73e066ebe6e01eb8c53d9bca4acba265060f"
+    },
+    {
+      "path": "scripts/package_ota_release.py",
+      "imported_path": "scripts/package_ota_release.py",
+      "blob_sha": "adc58b588e08179da3aedc7a6495f593d60cbcbd"
+    },
+    {
+      "path": "scripts/prepare_ota_pending_verify.py",
+      "imported_path": "scripts/prepare_ota_pending_verify.py",
+      "blob_sha": "41eeaf390f816c3d13795c53a2f63948365c82d7"
+    },
+    {
+      "path": "scripts/promote_ota_release.py",
+      "imported_path": "scripts/promote_ota_release.py",
+      "blob_sha": "d49cbfce14ed6468d1f3f7d28cfec327f91a15ec"
+    },
+    {
+      "path": "scripts/run_blocking_local_checks.sh",
+      "imported_path": "scripts/run_blocking_local_checks.sh",
+      "blob_sha": "bd930acff854b5e2639ef18718491bce25d80414"
+    },
+    {
+      "path": "scripts/run_gateway_matter_hil_smoke.sh",
+      "imported_path": "scripts/run_gateway_matter_hil_smoke.sh",
+      "blob_sha": "28c644cad9982a919fc76f24d668748d9d12d722"
+    },
+    {
+      "path": "scripts/run_gateway_mqtt_hil_smoke.sh",
+      "imported_path": "scripts/run_gateway_mqtt_hil_smoke.sh",
+      "blob_sha": "7a6618b32161948f9f75c640419af986ba521143"
+    },
+    {
+      "path": "scripts/run_gateway_ota_hil_smoke.sh",
+      "imported_path": "scripts/run_gateway_ota_hil_smoke.sh",
+      "blob_sha": "3ce54e8bac007c4ba480f0fb2e2a8fee0996f4e0"
+    },
+    {
+      "path": "scripts/run_gateway_ota_staging_hil.sh",
+      "imported_path": "scripts/run_gateway_ota_staging_hil.sh",
+      "blob_sha": "7e37110bf406f0533ae1c83c27f528a589a6e5d6"
+    },
+    {
+      "path": "scripts/run_gateway_zigbee_smoke.sh",
+      "imported_path": "scripts/run_gateway_zigbee_smoke.sh",
+      "blob_sha": "8a7d7a2f5c34b3ca13d2ebbf07838b56df7255bc"
+    },
+    {
+      "path": "scripts/run_hil_local.sh",
+      "imported_path": "scripts/run_hil_local.sh",
+      "blob_sha": "979233ccb40a756f7ff7068d78dd841d42df31a0"
+    },
+    {
+      "path": "scripts/run_matter_phase3_checks.sh",
+      "imported_path": "scripts/run_matter_phase3_checks.sh",
+      "blob_sha": "b20d174184303b6b8c5078481907b6598e0f017f"
+    },
+    {
+      "path": "scripts/serve_https_directory.py",
+      "imported_path": "scripts/serve_https_directory.py",
+      "blob_sha": "8fb2691e652a0ebe5ea60f1873f3417bac6950ef"
+    },
+    {
+      "path": "scripts/serve_https_range_server.py",
+      "imported_path": "scripts/serve_https_range_server.py",
+      "blob_sha": "d1d4751d7800ee53ab66d32cc4307c2d46c02b1c"
+    },
+    {
+      "path": "sdkconfig.defaults",
+      "imported_path": "sdkconfig.defaults",
+      "blob_sha": "97c4700098d24234d9e16c7272ab7426f28fee6e"
+    },
+    {
+      "path": "sdkconfig.defaults.esp32c6",
+      "imported_path": "sdkconfig.defaults.esp32c6",
+      "blob_sha": "2b3f803b22de026ac16dd3f1df009cfa97c6358d"
+    },
+    {
+      "path": "test/fixtures/ota_manifest_test_private.pem",
+      "imported_path": "test/fixtures/ota_manifest_test_private.pem",
+      "blob_sha": "0a30119ff5e47ded51f96652a76e53fb9677fcb9"
+    },
+    {
+      "path": "test/fixtures/ota_manifest_test_private_next.pem",
+      "imported_path": "test/fixtures/ota_manifest_test_private_next.pem",
+      "blob_sha": "3d5d5c680e9272ec036747ad3ffa3d91c523b0c4"
+    },
+    {
+      "path": "test/hil/README.md",
+      "imported_path": "test/hil/README.md",
+      "blob_sha": "d5481002eade9b2aa5beaebf55683b46a970440b"
+    },
+    {
+      "path": "test/host/CMakeLists.txt",
+      "imported_path": "test/host/CMakeLists.txt",
+      "blob_sha": "f5bde80d557712324146d8297c5719828603f0bd"
+    },
+    {
+      "path": "test/host/test_application_command_mapper.cpp",
+      "imported_path": "test/host/test_application_command_mapper.cpp",
+      "blob_sha": "c6ef6e70920a75a1fe6f9e1faf17cf0213f5b4f4"
+    },
+    {
+      "path": "test/host/test_config_manager_migration.cpp",
+      "imported_path": "test/host/test_config_manager_migration.cpp",
+      "blob_sha": "5080a7be1269cb310af5ae51371484f1336b1108"
+    },
+    {
+      "path": "test/host/test_core_device_id.cpp",
+      "imported_path": "test/host/test_core_device_id.cpp",
+      "blob_sha": "fb7c6876558f6302dbd80f2fb4096fee8ae790fc"
+    },
+    {
+      "path": "test/host/test_core_effects.cpp",
+      "imported_path": "test/host/test_core_effects.cpp",
+      "blob_sha": "354c542f0cee01b6912e83178603e68ac2df491d"
+    },
+    {
+      "path": "test/host/test_core_event_bus.cpp",
+      "imported_path": "test/host/test_core_event_bus.cpp",
+      "blob_sha": "f255fd8816aeab93b4539c196c083f973d0769c8"
+    },
+    {
+      "path": "test/host/test_core_reducer.cpp",
+      "imported_path": "test/host/test_core_reducer.cpp",
+      "blob_sha": "13549c21922e4d329bd9737b4fe48e1c5fbb02f3"
+    },
+    {
+      "path": "test/host/test_core_reducer_device_id.cpp",
+      "imported_path": "test/host/test_core_reducer_device_id.cpp",
+      "blob_sha": "0f5f2f7f67ae6fcee39f9295d1d96d2707436b33"
+    },
+    {
+      "path": "test/host/test_core_registry.cpp",
+      "imported_path": "test/host/test_core_registry.cpp",
+      "blob_sha": "01c19d24e8e98637263d18abc7cd60b173b5a68b"
+    },
+    {
+      "path": "test/host/test_device_descriptor_store.cpp",
+      "imported_path": "test/host/test_device_descriptor_store.cpp",
+      "blob_sha": "e798afdb91995ae37521eca133ba2195c659ef78"
+    },
+    {
+      "path": "test/host/test_device_locator_registry.cpp",
+      "imported_path": "test/host/test_device_locator_registry.cpp",
+      "blob_sha": "199ea01282e4ef385e649366e41947da1482115a"
+    },
+    {
+      "path": "test/host/test_hal_wifi_scan.cpp",
+      "imported_path": "test/host/test_hal_wifi_scan.cpp",
+      "blob_sha": "4acf3df1d064afe1a321a72ae38325973d1a4e87"
+    },
+    {
+      "path": "test/host/test_matter_bridge.cpp",
+      "imported_path": "test/host/test_matter_bridge.cpp",
+      "blob_sha": "6799732d767bfdb7ea298d9c141ea1bbbf482110"
+    },
+    {
+      "path": "test/host/test_matter_device_map.cpp",
+      "imported_path": "test/host/test_matter_device_map.cpp",
+      "blob_sha": "9e8a00679ca91d6466765af2b2c63e6b2b1a3a0a"
+    },
+    {
+      "path": "test/host/test_matter_runtime_attach_contract.cpp",
+      "imported_path": "test/host/test_matter_runtime_attach_contract.cpp",
+      "blob_sha": "8776e447357f74d6d2941f5178048082eb3049aa"
+    },
+    {
+      "path": "test/host/test_matter_runtime_command_loop.cpp",
+      "imported_path": "test/host/test_matter_runtime_command_loop.cpp",
+      "blob_sha": "0e6303a7f5e1848b6d38e4cac9fc59715e0bafd3"
+    },
+    {
+      "path": "test/host/test_matter_runtime_feed.cpp",
+      "imported_path": "test/host/test_matter_runtime_feed.cpp",
+      "blob_sha": "922d6791cd9b8b2317753264d617b9601557a6ad"
+    },
+    {
+      "path": "test/host/test_matter_runtime_robustness.cpp",
+      "imported_path": "test/host/test_matter_runtime_robustness.cpp",
+      "blob_sha": "0eedf3289edb5c96cb268d4f64e8575dfb724da7"
+    },
+    {
+      "path": "test/host/test_matter_snapshot_semantics.cpp",
+      "imported_path": "test/host/test_matter_snapshot_semantics.cpp",
+      "blob_sha": "a9f7a0f9b19012211df044618c574707f619a593"
+    },
+    {
+      "path": "test/host/test_mqtt_bridge_commands.cpp",
+      "imported_path": "test/host/test_mqtt_bridge_commands.cpp",
+      "blob_sha": "3f3540a7493c08dffb7198280142293e6e5dad6b"
+    },
+    {
+      "path": "test/host/test_mqtt_device_sync.cpp",
+      "imported_path": "test/host/test_mqtt_device_sync.cpp",
+      "blob_sha": "ad34edb5b6d8048becc88a22d78f6654ee3655bd"
+    },
+    {
+      "path": "test/host/test_mqtt_discovery.cpp",
+      "imported_path": "test/host/test_mqtt_discovery.cpp",
+      "blob_sha": "585fb0edf9d0420677bcf35cf386bbdc05106f9d"
+    },
+    {
+      "path": "test/host/test_mqtt_runtime_feed.cpp",
+      "imported_path": "test/host/test_mqtt_runtime_feed.cpp",
+      "blob_sha": "d3b8a482f6710dfd2418120449d1cc6eedf08019"
+    },
+    {
+      "path": "test/host/test_mqtt_serializer.cpp",
+      "imported_path": "test/host/test_mqtt_serializer.cpp",
+      "blob_sha": "fd7789e5956ea6529ab2531c016263e7006179c6"
+    },
+    {
+      "path": "test/host/test_mqtt_status_runtime_feed.cpp",
+      "imported_path": "test/host/test_mqtt_status_runtime_feed.cpp",
+      "blob_sha": "f239721c6257a9747b80aed5fd31d58bbc02e3a9"
+    },
+    {
+      "path": "test/host/test_mqtt_topics.cpp",
+      "imported_path": "test/host/test_mqtt_topics.cpp",
+      "blob_sha": "130c6264bc078b5c4188af65a297f261428dcdd4"
+    },
+    {
+      "path": "test/host/test_operation_result_store.cpp",
+      "imported_path": "test/host/test_operation_result_store.cpp",
+      "blob_sha": "dc9af5021bce7e393b349cd1015dd86615017275"
+    },
+    {
+      "path": "test/host/test_ota_bootstrap.cpp",
+      "imported_path": "test/host/test_ota_bootstrap.cpp",
+      "blob_sha": "44ff9b5c991e58fb6f706b2cf6b9b752a79bfb57"
+    },
+    {
+      "path": "test/host/test_ota_manifest.cpp",
+      "imported_path": "test/host/test_ota_manifest.cpp",
+      "blob_sha": "a458e7d86380c96ba507395d68feb3bae7b159cf"
+    },
+    {
+      "path": "test/host/test_read_model_coordinator.cpp",
+      "imported_path": "test/host/test_read_model_coordinator.cpp",
+      "blob_sha": "a5937c80c641967b0133cf957a15716c112fb5b7"
+    },
+    {
+      "path": "test/host/test_service_capabilities.cpp",
+      "imported_path": "test/host/test_service_capabilities.cpp",
+      "blob_sha": "f9dee56170f8796c94b08e1195f31ec6e07f1649"
+    },
+    {
+      "path": "test/host/test_service_config_bootstrap.cpp",
+      "imported_path": "test/host/test_service_config_bootstrap.cpp",
+      "blob_sha": "19586ff7080947fc8b9ae29e4b725634ae06f359"
+    },
+    {
+      "path": "test/host/test_service_force_remove.cpp",
+      "imported_path": "test/host/test_service_force_remove.cpp",
+      "blob_sha": "ab5b6313a5d1c403ab189fab13127eecf0cf82c2"
+    },
+    {
+      "path": "test/host/test_service_hal_adapter.cpp",
+      "imported_path": "test/host/test_service_hal_adapter.cpp",
+      "blob_sha": "5a54d432af8e0d58d12b7254a835cfbd88f53d61"
+    },
+    {
+      "path": "test/host/test_service_join_policy.cpp",
+      "imported_path": "test/host/test_service_join_policy.cpp",
+      "blob_sha": "044cd1b4444e5e035fac8fe6391a48a9d177d64b"
+    },
+    {
+      "path": "test/host/test_service_network_autoconnect_limit.cpp",
+      "imported_path": "test/host/test_service_network_autoconnect_limit.cpp",
+      "blob_sha": "724c86e98874644894c380ffe9f1edc04e81a890"
+    },
+    {
+      "path": "test/host/test_service_network_connect.cpp",
+      "imported_path": "test/host/test_service_network_connect.cpp",
+      "blob_sha": "d3092fc60ad64e2f571a52bb3809da52c34632a9"
+    },
+    {
+      "path": "test/host/test_service_network_no_reconnect.cpp",
+      "imported_path": "test/host/test_service_network_no_reconnect.cpp",
+      "blob_sha": "e369d12f527d5e2234e5d77010151d846c3f7de8"
+    },
+    {
+      "path": "test/host/test_service_network_policy_state_access.cpp",
+      "imported_path": "test/host/test_service_network_policy_state_access.cpp",
+      "blob_sha": "0fde14502a1464536db5a16fec3f78344880b8e1"
+    },
+    {
+      "path": "test/host/test_service_network_reconnect.cpp",
+      "imported_path": "test/host/test_service_network_reconnect.cpp",
+      "blob_sha": "ae1ff165c80cdea41bfc54659c02f9cb58409e47"
+    },
+    {
+      "path": "test/host/test_service_network_scan.cpp",
+      "imported_path": "test/host/test_service_network_scan.cpp",
+      "blob_sha": "beacfcaac96609701d9dccc5833d295b28d8772e"
+    },
+    {
+      "path": "test/host/test_service_network_timeout.cpp",
+      "imported_path": "test/host/test_service_network_timeout.cpp",
+      "blob_sha": "54c7bfaaef17727a278b675d3691ae1cc68f2b63"
+    },
+    {
+      "path": "test/host/test_service_ota.cpp",
+      "imported_path": "test/host/test_service_ota.cpp",
+      "blob_sha": "80c6105e3e7c1d207d4f2b2590419895fd73fe44"
+    },
+    {
+      "path": "test/host/test_service_rcp.cpp",
+      "imported_path": "test/host/test_service_rcp.cpp",
+      "blob_sha": "fb50fe1639e1ffd80441c4edfecb5029b35e3ce9"
+    },
+    {
+      "path": "test/host/test_service_remove_device.cpp",
+      "imported_path": "test/host/test_service_remove_device.cpp",
+      "blob_sha": "ddf5820c2751ac87dedf78ca8e517460d73acc79"
+    },
+    {
+      "path": "test/host/test_service_reporting_faults.cpp",
+      "imported_path": "test/host/test_service_reporting_faults.cpp",
+      "blob_sha": "562ae29d6b1b464a6b58a7c69c5dbf4955a80baf"
+    },
+    {
+      "path": "test/host/test_service_reporting_flow.cpp",
+      "imported_path": "test/host/test_service_reporting_flow.cpp",
+      "blob_sha": "f628373ece02c6638a492c4f5c1dea4f97956a0b"
+    },
+    {
+      "path": "test/host/test_service_reporting_manager.cpp",
+      "imported_path": "test/host/test_service_reporting_manager.cpp",
+      "blob_sha": "b002021667e571c727a73bc0a5b044c9ea904b35"
+    },
+    {
+      "path": "test/host/test_service_reporting_profiles.cpp",
+      "imported_path": "test/host/test_service_reporting_profiles.cpp",
+      "blob_sha": "bce7efd3ca8e4815018ee3b21cc1461c4e32eaf1"
+    },
+    {
+      "path": "test/host/test_service_reporting_retry.cpp",
+      "imported_path": "test/host/test_service_reporting_retry.cpp",
+      "blob_sha": "6c7b081d8904748fc570e22934508254e85769a0"
+    },
+    {
+      "path": "test/host/test_service_reporting_semantics.cpp",
+      "imported_path": "test/host/test_service_reporting_semantics.cpp",
+      "blob_sha": "eab226bbfb2375c713670675c462bc10236e9856"
+    },
+    {
+      "path": "test/host/test_service_reporting_stale.cpp",
+      "imported_path": "test/host/test_service_reporting_stale.cpp",
+      "blob_sha": "367758f9b11a1a310493434e671487c6a97122f2"
+    },
+    {
+      "path": "test/host/test_service_runtime.cpp",
+      "imported_path": "test/host/test_service_runtime.cpp",
+      "blob_sha": "aef8864e8b0ec3f921661add3adc084d6dcc6d6b"
+    },
+    {
+      "path": "test/host/test_service_runtime_lifecycle.cpp",
+      "imported_path": "test/host/test_service_runtime_lifecycle.cpp",
+      "blob_sha": "713078248e9cef68c6e7bc4bc1aff925d10ce5b5"
+    },
+    {
+      "path": "test/host/test_service_saved_credentials_zigbee_start.cpp",
+      "imported_path": "test/host/test_service_saved_credentials_zigbee_start.cpp",
+      "blob_sha": "baaaeff1da3ef68c6d3048af7b0d6dd49b6a7868"
+    },
+    {
+      "path": "test/host/test_service_scan_status.cpp",
+      "imported_path": "test/host/test_service_scan_status.cpp",
+      "blob_sha": "419e9103d3b72236514e232fb4b9c6fef9acaaeb"
+    },
+    {
+      "path": "test/host/test_service_zigbee_formation_retry.cpp",
+      "imported_path": "test/host/test_service_zigbee_formation_retry.cpp",
+      "blob_sha": "9835643f8f90927d9447e43e67dba84eb1f4427d"
+    },
+    {
+      "path": "test/host/test_state_persistence_coordinator.cpp",
+      "imported_path": "test/host/test_state_persistence_coordinator.cpp",
+      "blob_sha": "82818717dbff5bfcbc95966737741761c52b77a5"
+    },
+    {
+      "path": "test/host/test_tuya_command_encode.cpp",
+      "imported_path": "test/host/test_tuya_command_encode.cpp",
+      "blob_sha": "f474fef16d479429ba40bc833a4907c0da470a51"
+    },
+    {
+      "path": "test/host/test_tuya_contact_sensor_plugin.cpp",
+      "imported_path": "test/host/test_tuya_contact_sensor_plugin.cpp",
+      "blob_sha": "d01f0e3ecabe81b8f155b0e8deab1cf4b1e627e4"
+    },
+    {
+      "path": "test/host/test_tuya_dp_parser.cpp",
+      "imported_path": "test/host/test_tuya_dp_parser.cpp",
+      "blob_sha": "e555e4e9a2e0269ba821dbc350675e9fa58607a0"
+    },
+    {
+      "path": "test/host/test_tuya_fingerprint.cpp",
+      "imported_path": "test/host/test_tuya_fingerprint.cpp",
+      "blob_sha": "f6be78ef583753c00fb863c3869522ced8314445"
+    },
+    {
+      "path": "test/host/test_tuya_hybrid_device.cpp",
+      "imported_path": "test/host/test_tuya_hybrid_device.cpp",
+      "blob_sha": "36bc571dd296466948f680a8a9f376af169bee91"
+    },
+    {
+      "path": "test/host/test_tuya_init_coordinator.cpp",
+      "imported_path": "test/host/test_tuya_init_coordinator.cpp",
+      "blob_sha": "4dd5caab59f443e8e3f25ade93ab9f1998aaa87f"
+    },
+    {
+      "path": "test/host/test_tuya_switch_plugin.cpp",
+      "imported_path": "test/host/test_tuya_switch_plugin.cpp",
+      "blob_sha": "f52f67df1c587894d89633da3c3fd39508723b04"
+    },
+    {
+      "path": "test/host/test_tuya_translator.cpp",
+      "imported_path": "test/host/test_tuya_translator.cpp",
+      "blob_sha": "339606432204588712c841207019b28b6ca6cb08"
+    },
+    {
+      "path": "test/host/test_web_handlers_config.cpp",
+      "imported_path": "test/host/test_web_handlers_config.cpp",
+      "blob_sha": "a7b8adb30334e4d10f548187afc4ab9f188465a1"
+    },
+    {
+      "path": "test/host/test_web_handlers_config_post.cpp",
+      "imported_path": "test/host/test_web_handlers_config_post.cpp",
+      "blob_sha": "ed5d86d975ee200f49b6ba5549f17182e8093882"
+    },
+    {
+      "path": "test/host/test_web_handlers_network.cpp",
+      "imported_path": "test/host/test_web_handlers_network.cpp",
+      "blob_sha": "e10c13482cb134ea1035cb3d1139ee8025556bcb"
+    },
+    {
+      "path": "test/host/test_web_handlers_network_routes.cpp",
+      "imported_path": "test/host/test_web_handlers_network_routes.cpp",
+      "blob_sha": "5ceafa992a037884b61933a86b2d9421cb468899"
+    },
+    {
+      "path": "test/host/test_web_handlers_ota.cpp",
+      "imported_path": "test/host/test_web_handlers_ota.cpp",
+      "blob_sha": "d8ae00c5cf54005be7e1bb628cf114076ccdccfc"
+    },
+    {
+      "path": "test/host/test_web_handlers_rcp.cpp",
+      "imported_path": "test/host/test_web_handlers_rcp.cpp",
+      "blob_sha": "1ac80c4bf22bd2477e4f45d6536d24574113709d"
+    },
+    {
+      "path": "test/host/test_web_json_helpers.cpp",
+      "imported_path": "test/host/test_web_json_helpers.cpp",
+      "blob_sha": "e7334f61ce7b48a300524e09fadac755defecd79"
+    },
+    {
+      "path": "test/host/test_zigbee_lifecycle_coordinator.cpp",
+      "imported_path": "test/host/test_zigbee_lifecycle_coordinator.cpp",
+      "blob_sha": "bb841c8b81bfc5cebaadba1cb3b3badb6656ed19"
+    },
+    {
+      "path": "test/integration/CMakeLists.txt",
+      "imported_path": "test/integration/CMakeLists.txt",
+      "blob_sha": "bdb8a47551a0816e8f9a08e0d2c3deca88b159a4"
+    },
+    {
+      "path": "test/integration/README.md",
+      "imported_path": "test/integration/README.md",
+      "blob_sha": "7995d600d6164f3c242d3092f9fc2f69f8e571e2"
+    },
+    {
+      "path": "test/integration/test_integration_hal_platform_shims.cpp",
+      "imported_path": "test/integration/test_integration_hal_platform_shims.cpp",
+      "blob_sha": "77e6b7a9e79117aa0573bcb7a482a3f50f58fede"
+    },
+    {
+      "path": "test/integration/test_integration_web_handlers_device.cpp",
+      "imported_path": "test/integration/test_integration_web_handlers_device.cpp",
+      "blob_sha": "d5a39216fa2fa01b602c7008acab98faf02e2840"
+    },
+    {
+      "path": "test/integration/test_integration_web_handlers_ota.cpp",
+      "imported_path": "test/integration/test_integration_web_handlers_ota.cpp",
+      "blob_sha": "acd536581a38e4487c8c8f2b990f5899dda44f87"
+    },
+    {
+      "path": "test/integration/test_integration_web_handlers_rcp.cpp",
+      "imported_path": "test/integration/test_integration_web_handlers_rcp.cpp",
+      "blob_sha": "ccbae323e82334fc3236524d2ce8ce86a5e4defd"
+    },
+    {
+      "path": "test/integration/test_integration_web_handlers_static.cpp",
+      "imported_path": "test/integration/test_integration_web_handlers_static.cpp",
+      "blob_sha": "c7ee18f903a8847fbdf2029125331203f2ee3f57"
+    },
+    {
+      "path": "test/integration/test_integration_web_routes.cpp",
+      "imported_path": "test/integration/test_integration_web_routes.cpp",
+      "blob_sha": "a9c5b94d13a73241a8bc18befc1e08fbdc0880a9"
+    },
+    {
+      "path": "test/integration/test_integration_web_server.cpp",
+      "imported_path": "test/integration/test_integration_web_server.cpp",
+      "blob_sha": "f0f35dd792305a9e1c665b84f44f82c22018243d"
+    },
+    {
+      "path": "test/mocks/mock_hal_nvs.c",
+      "imported_path": "test/mocks/mock_hal_nvs.c",
+      "blob_sha": "ccc2ebcb8dfa3dbdb3dd9f9cdedf9d4a72f1e258"
+    },
+    {
+      "path": "test/mocks/mock_hal_nvs.h",
+      "imported_path": "test/mocks/mock_hal_nvs.h",
+      "blob_sha": "5a6194835f39c4ec58b643c22eb4b2c30a98aee3"
+    },
+    {
+      "path": "test/mocks/mock_hal_zigbee.c",
+      "imported_path": "test/mocks/mock_hal_zigbee.c",
+      "blob_sha": "1e6e59f8b0e255992d71e3215333304a94a16eef"
+    },
+    {
+      "path": "test/mocks/mock_hal_zigbee.h",
+      "imported_path": "test/mocks/mock_hal_zigbee.h",
+      "blob_sha": "79aa9a03dbad110d3429b77cacb027159950e9ff"
+    },
+    {
+      "path": "test/target/CMakeLists.txt",
+      "imported_path": "test/target/CMakeLists.txt",
+      "blob_sha": "a7439d76ef21c37d6474db0b4c9cbb4c338b950c"
+    },
+    {
+      "path": "test/target/dependencies.lock",
+      "imported_path": "test/target/dependencies.lock",
+      "blob_sha": "49c35a88ae5dbe057452efd25ca0d84c60d6bee7"
+    },
+    {
+      "path": "test/target/main/CMakeLists.txt",
+      "imported_path": "test/target/main/CMakeLists.txt",
+      "blob_sha": "572b2db3c872eb2a59facee1e04af5a9da3efc4d"
+    },
+    {
+      "path": "test/target/main/test_main.c",
+      "imported_path": "test/target/main/test_main.c",
+      "blob_sha": "0b589dc01cd9da7bcd32c50606fafeb29ff1066d"
+    },
+    {
+      "path": "test/target/partitions.csv",
+      "imported_path": "test/target/partitions.csv",
+      "blob_sha": "f74f72b190fbe2ed476eea0012f32eed449624fc"
+    },
+    {
+      "path": "test/target/sdkconfig.defaults",
+      "imported_path": "test/target/sdkconfig.defaults",
+      "blob_sha": "37318994c97f80ca84acee6be48216e8101e3b56"
+    },
+    {
+      "path": "test/target/test_config_manager_runtime_policies.cpp",
+      "imported_path": "test/target/test_config_manager_runtime_policies.cpp",
+      "blob_sha": "212e8676bb201d9f42948e0d0dc776eb07defd78"
+    },
+    {
+      "path": "test/target/test_hal_mqtt.c",
+      "imported_path": "test/target/test_hal_mqtt.c",
+      "blob_sha": "83b0d888d83182ea445a2320a48167b645df378c"
+    },
+    {
+      "path": "test/target/test_hal_nvs.c",
+      "imported_path": "test/target/test_hal_nvs.c",
+      "blob_sha": "fa35d179ce5735e53c0119f6f8e695cef9173afb"
+    },
+    {
+      "path": "test/target/test_hal_ota.c",
+      "imported_path": "test/target/test_hal_ota.c",
+      "blob_sha": "011f9e9ce3549000aca1532288cb45109ae3c1af"
+    },
+    {
+      "path": "test/target/test_hal_zigbee.c",
+      "imported_path": "test/target/test_hal_zigbee.c",
+      "blob_sha": "ebd0b61339531e205b5a26512df05ca439d4cdda"
+    },
+    {
+      "path": "test/target/test_reporting_faults.c",
+      "imported_path": "test/target/test_reporting_faults.c",
+      "blob_sha": "2aa458d6153cf23035f52a657491d48661f226a6"
+    },
+    {
+      "path": "test/target/test_reporting_flow.c",
+      "imported_path": "test/target/test_reporting_flow.c",
+      "blob_sha": "6e33e2e9d9f5acbe4eecc4c5910bbe5768535d84"
+    },
+    {
+      "path": "test/target/test_web_api_integration.cpp",
+      "imported_path": "test/target/test_web_api_integration.cpp",
+      "blob_sha": "d212ab38265c2806eb07048d1ba555bc5a62db2a"
+    },
+    {
+      "path": "tools/extract_repository_inventory.py",
+      "imported_path": "tools/extract_repository_inventory.py",
+      "blob_sha": "232d23c92edb0866fb2b233693a5b038f02ab345"
+    }
+  ]
+}
