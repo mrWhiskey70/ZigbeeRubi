@@ -3,11 +3,9 @@
 #include <iostream>
 #include <string>
 #include <vector>
-int main(int argc, char **argv) {
-  if (argc < 2)
-    return 2;
-  scenario::SimulatorRuntime runtime(argv[1]);
-  const bool real = argc > 2 && std::string(argv[2]) == "--real-time";
+namespace {
+int run(const std::filesystem::path &directory, bool real) {
+  scenario::SimulatorRuntime runtime(directory);
   auto last = std::chrono::steady_clock::now();
   std::string line;
   std::vector<char> buffer(65536);
@@ -28,4 +26,19 @@ int main(int argc, char **argv) {
           << "{\"status\":503,\"body\":{\"error\":\"response_capacity\"}}";
     std::cout << std::endl;
   }
+  return 0;
 }
+} // namespace
+#ifdef _WIN32
+int wmain(int argc, wchar_t **argv) {
+  if (argc < 2)
+    return 2;
+  return run(argv[1], argc > 2 && std::wstring(argv[2]) == L"--real-time");
+}
+#else
+int main(int argc, char **argv) {
+  if (argc < 2)
+    return 2;
+  return run(argv[1], argc > 2 && std::string(argv[2]) == "--real-time");
+}
+#endif

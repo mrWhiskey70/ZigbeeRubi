@@ -8,6 +8,11 @@
 
 ## Начать сейчас
 
+**Windows:** скачайте ZIP из workflow **Windows simulator**, распакуйте и откройте `ZigbeeRubi.exe`. [Инструкция](README_RU.md#windows--запуск-двойным-кликом).
+
+Запуск из исходников:
+
+
 ```sh
 bash scripts/run_simulator.sh
 ```

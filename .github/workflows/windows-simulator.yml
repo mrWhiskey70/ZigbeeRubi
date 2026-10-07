@@ -21,3 +21,12 @@ jobs:
       - run: cmake -S host -B build-simulator -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded
       - run: cmake --build build-simulator --config Release -j 2
       - run: ctest --test-dir build-simulator -C Release --output-on-failure
+      - run: python -m unittest discover -s test/host_sim -v
+      - run: python -m pip install pyinstaller==6.22.3
+      - run: python scripts/package_windows_simulator.py
+      - run: python test/windows/package_smoke.py build-windows-release/ZigbeeRubi-Windows-x64.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ZigbeeRubi-Windows-x64
+          if-no-files-found: error
+          path: build-windows-release/ZigbeeRubi-Windows-x64.zip

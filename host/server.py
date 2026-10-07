@@ -2,10 +2,12 @@
 import argparse
 import json
 import mimetypes
+import os
 import queue
 import subprocess
 import threading
 import time
+import webbrowser
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import urlsplit
@@ -16,7 +18,8 @@ class Bridge:
     def __init__(self, binary, data, virtual):
         args = [str(binary), str(data)] + ([] if virtual else ['--real-time'])
         self.child = subprocess.Popen(args, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                                      stderr=None, text=True, encoding='utf-8', bufsize=1)
+                                      stderr=None, text=True, encoding='utf-8', bufsize=1,
+                                      creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0)
         self.lock = threading.Lock()
         self.responses = queue.Queue()
         self.closed = threading.Event()
@@ -57,16 +60,18 @@ class Bridge:
         self.child.stdin.close();self.child.stdout.close()
 
 
-def main():
+def main(argv=None, on_ready=None):
     parser = argparse.ArgumentParser()
     parser.add_argument('--host',default='127.0.0.1')
     parser.add_argument('--port',type=int,default=8080)
     parser.add_argument('--data-dir',type=Path,default=ROOT/'.sim-data')
-    parser.add_argument('--binary',type=Path,default=ROOT/'build-simulator/zigbee_hub_sim')
+    default_binary = ROOT/'build-simulator'/('zigbee_hub_sim.exe' if os.name == 'nt' else 'zigbee_hub_sim')
+    parser.add_argument('--binary',type=Path,default=Path(os.environ.get('ZIGBEERUBI_SIM_BINARY',str(default_binary))))
+    parser.add_argument('--assets',type=Path,default=ROOT/'components/web_ui/assets')
+    parser.add_argument('--open',action='store_true',help='Open the interface in the default browser')
     parser.add_argument('--virtual-time',action='store_true')
-    args=parser.parse_args()
-    bridge=Bridge(args.binary,args.data_dir,args.virtual_time)
-    assets=ROOT/'components/web_ui/assets'
+    args=parser.parse_args(argv)
+    assets=args.assets
     class Handler(BaseHTTPRequestHandler):
         def send_json(self,status,body):
             data=json.dumps(body,ensure_ascii=False).encode('utf-8')
@@ -99,8 +104,16 @@ def main():
         do_GET=handle_api;do_POST=handle_api;do_PUT=handle_api;do_DELETE=handle_api
         def log_message(self,*args):pass
     server=ThreadingHTTPServer((args.host,args.port),Handler)
-    print(json.dumps({'url':f'http://{args.host}:{server.server_port}','child_pid':bridge.child.pid}),flush=True)
-    try:server.serve_forever()
-    finally:server.server_close();bridge.close()
+    bridge=None
+    try:
+        bridge=Bridge(args.binary,args.data_dir,args.virtual_time)
+        info={'url':f'http://{args.host}:{server.server_port}','child_pid':bridge.child.pid}
+        if on_ready is None:print(json.dumps(info),flush=True)
+        else:on_ready(info)
+        if args.open:webbrowser.open(info['url'])
+        server.serve_forever()
+    finally:
+        server.server_close()
+        if bridge is not None:bridge.close()
 
 if __name__=='__main__':main()

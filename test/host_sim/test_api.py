@@ -18,7 +18,7 @@ class Api(unittest.TestCase):
   self.assertEqual(self.s.call('/api/v1/scenarios/1',method='DELETE')[0],200)
  def test_child_crash_is_503(self):
   self.assertGreater(self.s.info['child_pid'],1)
-  os.kill(self.s.info['child_pid'],signal.SIGKILL)
+  os.kill(self.s.info['child_pid'],getattr(signal,'SIGKILL',signal.SIGTERM))
   self.assertEqual(self.s.call('/api/v1/system')[0],503)
  def test_rename_persists(self):
   path='/api/v1/devices/0000000000000001';self.assertEqual(self.s.call(path,{'name':'Вход'},'PUT')[0],200)

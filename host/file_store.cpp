@@ -3,6 +3,9 @@
 #include <fstream>
 #include <system_error>
 #ifdef _WIN32
+#define NOMINMAX
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
 #include <io.h>
 #else
 #include <fcntl.h>
@@ -34,7 +37,11 @@ bool FileStore::write(const char *prefix, unsigned index,
       directory_ / (std::string(prefix) + std::to_string(index) + ".bin");
   auto temp = path;
   temp += ".tmp";
+#ifdef _WIN32
+  FILE *f = _wfopen(temp.c_str(), L"wb");
+#else
   FILE *f = std::fopen(temp.string().c_str(), "wb");
+#endif
   if (!f)
     return false;
   bool ok = std::fwrite(data.data(), 1, data.size(), f) == data.size() &&
@@ -47,18 +54,21 @@ bool FileStore::write(const char *prefix, unsigned index,
   ok = std::fclose(f) == 0 && ok;
   if (!ok)
     return false;
+#ifdef _WIN32
+  return MoveFileExW(temp.c_str(), path.c_str(),
+                     MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH) != 0;
+#else
   std::error_code ec;
   std::filesystem::rename(temp, path, ec);
   if (ec)
     return false;
-#ifndef _WIN32
   int fd = open(directory_.string().c_str(), O_RDONLY | O_DIRECTORY);
   if (fd < 0)
     return false;
   ok = fsync(fd) == 0;
   close(fd);
-#endif
   return ok;
+#endif
 }
 bool FileStore::read_slot(unsigned i, std::vector<uint8_t> &v) noexcept {
   return read("slot", i, v);
