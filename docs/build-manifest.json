@@ -1,0 +1,39 @@
+{
+  "schema": 1,
+  "hardware_verified": false,
+  "idf_version": "v5.5.2",
+  "target": "esp32c6",
+  "flash_mb": 16,
+  "ota_slot_bytes": 3145728,
+  "nvs_bytes": 524288,
+  "source_commit": "9484c78cad9f1fd2adf71e4115ccbbb5952f82c9",
+  "source_dirty": false,
+  "upstream_commit": "1838e5b35bfaf3cc8b328ddc044b997019533881",
+  "dependencies": {
+    "esp-zigbee-lib": "1.6.8",
+    "esp-zboss-lib": "1.6.4",
+    "mdns": "1.9.1"
+  },
+  "artifacts": {
+    "zigbee_gateway.bin": {
+      "bytes": 1781136,
+      "sha256": "eaeff30f1638dcbcca494d25d74a8ceab9995f2452c42e3d22cc6e481c256a0c"
+    },
+    "bootloader/bootloader.bin": {
+      "bytes": 22736,
+      "sha256": "7d16c1a76b9a78c138f2fe91b5d3dc0a5cd53880c30de26aa276522638f082d9"
+    },
+    "partition_table/partition-table.bin": {
+      "bytes": 3072,
+      "sha256": "ced7a124ccd68371b13ee47ca6285e5c0d234023e8de53e6c9b10b9a72fd4993"
+    },
+    "ota_data_initial.bin": {
+      "bytes": 8192,
+      "sha256": "7d2c7ac4888bfd75cd5f56e8d61f69595121183afc81556c876732fd3782c62f"
+    }
+  },
+  "source_content_sha256": "c5b0c7a32db2e9cee5122c826647b3fb2857c39e61fd47e98489703eccb9aae0",
+  "repository_source_commit": "585bede48bde00a7af8b3ee10dc07aa5fc7bb2c0",
+  "repository_source_tree": "e59807dbd5c8878e86a4d2489b01049fbcdf94ac",
+  "provenance_note": "Published repository tree was verified identical to the local checkout. source_commit identifies the local build checkout; repository_source_commit is the reachable GitHub snapshot with identical product source_content_sha256."
+}

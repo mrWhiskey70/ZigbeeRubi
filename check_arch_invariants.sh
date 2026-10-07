@@ -1,0 +1,732 @@
+#!/usr/bin/env bash
+# SPDX-License-Identifier: AGPL-3.0-only
+# Copyright (C) 2026 Alex.K.
+
+set -euo pipefail
+
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "${ROOT_DIR}"
+
+MATRIX_FILE="${ARCH_MATRIX_FILE:-${ROOT_DIR}/docs/architecture/ARCH_COMPLIANCE_MATRIX.md}"
+EXCEPTIONS_FILE="${ARCH_EXCEPTIONS_FILE:-${ROOT_DIR}/docs/architecture/ADR_EXCEPTIONS.md}"
+BLOCKING_SEVERITIES="${ARCH_BLOCKING_SEVERITIES:-high,medium}"
+
+TMP_DIR="$(mktemp -d)"
+trap 'rm -rf "${TMP_DIR}"' EXIT
+
+declare -a EX_RULES=()
+declare -a EX_PATHS=()
+declare -a EX_EXPIRES=()
+
+HIGH_COUNT=0
+MEDIUM_COUNT=0
+LOW_COUNT=0
+SUPPRESSED_COUNT=0
+
+print_banner() {
+    echo "[arch-gate] ${1}"
+}
+
+severity_inc() {
+    case "${1}" in
+        high) HIGH_COUNT=$((HIGH_COUNT + 1)) ;;
+        medium) MEDIUM_COUNT=$((MEDIUM_COUNT + 1)) ;;
+        low) LOW_COUNT=$((LOW_COUNT + 1)) ;;
+    esac
+}
+
+is_blocking_severity() {
+    local severity="${1}"
+    [[ ",${BLOCKING_SEVERITIES}," == *",${severity},"* ]]
+}
+
+load_exceptions() {
+    if [[ ! -f "${EXCEPTIONS_FILE}" ]]; then
+        print_banner "WARN: exceptions file is missing: ${EXCEPTIONS_FILE}"
+        return
+    fi
+
+    while IFS= read -r line; do
+        [[ "${line}" == *"ARCH_EXCEPTION:"* ]] || continue
+        [[ "${line}" == *"STATUS=active"* ]] || continue
+
+        local rule path expires
+        rule="$(printf '%s\n' "${line}" | sed -n 's/.*RULE=\([^[:space:]]*\).*/\1/p')"
+        path="$(printf '%s\n' "${line}" | sed -n 's/.*PATH=\([^[:space:]]*\).*/\1/p')"
+        expires="$(printf '%s\n' "${line}" | sed -n 's/.*EXPIRES=\([^[:space:]]*\).*/\1/p')"
+
+        [[ -n "${rule}" ]] || continue
+        [[ -n "${path}" ]] || path=".*"
+        [[ -n "${expires}" ]] || expires="9999-12-31"
+
+        EX_RULES+=("${rule}")
+        EX_PATHS+=("${path}")
+        EX_EXPIRES+=("${expires}")
+    done < "${EXCEPTIONS_FILE}"
+}
+
+exception_active_for() {
+    local rule_id="${1}"
+    local path="${2}"
+    local today
+    today="$(date +%F)"
+
+    for i in "${!EX_RULES[@]}"; do
+        if [[ "${EX_RULES[$i]}" != "${rule_id}" ]]; then
+            continue
+        fi
+        if [[ "${today}" > "${EX_EXPIRES[$i]}" ]]; then
+            continue
+        fi
+        if [[ "${path}" =~ ${EX_PATHS[$i]} ]]; then
+            return 0
+        fi
+    done
+
+    return 1
+}
+
+report_violation() {
+    local rule_id="${1}"
+    local severity="${2}"
+    local path="${3}"
+    local message="${4}"
+    local matches_file="${5}"
+
+    if exception_active_for "${rule_id}" "${path}"; then
+        SUPPRESSED_COUNT=$((SUPPRESSED_COUNT + 1))
+        print_banner "SUPPRESSED ${severity^^} ${rule_id}: ${message} (${path})"
+        return
+    fi
+
+    severity_inc "${severity}"
+    print_banner "VIOLATION ${severity^^} ${rule_id}: ${message} (${path})"
+    if [[ -f "${matches_file}" ]]; then
+        sed 's/^/[arch-gate]   /' "${matches_file}"
+    fi
+}
+
+check_absent() {
+    local rule_id="${1}"
+    local severity="${2}"
+    local path="${3}"
+    local pattern="${4}"
+    local message="${5}"
+    local matches_file="${TMP_DIR}/${rule_id}.txt"
+
+    if grep -E -n -r -- "${pattern}" "${path}" > "${matches_file}" 2>/dev/null; then
+        report_violation "${rule_id}" "${severity}" "${path}" "${message}" "${matches_file}"
+    fi
+}
+
+check_present() {
+    local rule_id="${1}"
+    local severity="${2}"
+    local path="${3}"
+    local pattern="${4}"
+    local message="${5}"
+    local matches_file="${TMP_DIR}/${rule_id}.txt"
+
+    if ! grep -E -n -r -- "${pattern}" "${path}" > "${matches_file}" 2>/dev/null; then
+        printf 'missing required pattern: %s\n' "${pattern}" > "${matches_file}"
+        report_violation "${rule_id}" "${severity}" "${path}" "${message}" "${matches_file}"
+    fi
+}
+
+check_freertos_include_order() {
+    local rule_id="${1}"
+    local severity="${2}"
+    local search_path="${3}"
+    local message="${4}"
+    local matches_file="${TMP_DIR}/${rule_id}.txt"
+    : > "${matches_file}"
+
+    while IFS= read -r file; do
+        [[ -n "${file}" ]] || continue
+        local freertos_line task_line
+        freertos_line="$(grep -n '^[[:space:]]*#include[[:space:]]\+"freertos/FreeRTOS.h"' "${file}" | head -n1 | cut -d: -f1 || true)"
+        task_line="$(grep -n '^[[:space:]]*#include[[:space:]]\+"freertos/task.h"' "${file}" | head -n1 | cut -d: -f1 || true)"
+
+        [[ -n "${task_line}" ]] || continue
+        if [[ -z "${freertos_line}" || "${task_line}" -lt "${freertos_line}" ]]; then
+            {
+                printf '%s: include order invalid (FreeRTOS.h line=%s, task.h line=%s)\n' \
+                    "${file}" "${freertos_line:-missing}" "${task_line}"
+            } >> "${matches_file}"
+        fi
+    done < <(grep -E -l -r -- '^[[:space:]]*#include[[:space:]]+"freertos/task.h"' "${search_path}" 2>/dev/null || true)
+
+    if [[ -s "${matches_file}" ]]; then
+        report_violation "${rule_id}" "${severity}" "${search_path}" "${message}" "${matches_file}"
+    fi
+}
+
+check_no_cross_include() {
+    local rule_id="${1}"
+    local severity="${2}"
+    local consumer_dir="${3}"
+    local provider_include_dir="${4}"
+    local message="${5}"
+    local matches_file="${TMP_DIR}/${rule_id}_cross_$(printf '%s' "${consumer_dir}" | tr '/' '_').txt"
+    : > "${matches_file}"
+
+    local -a header_names=()
+    while IFS= read -r header; do
+        header_names+=("$(basename "${header}")")
+    done < <(find "${provider_include_dir}" -maxdepth 1 -type f \( -name '*.h' -o -name '*.hpp' \) 2>/dev/null)
+
+    if [[ ${#header_names[@]} -eq 0 ]]; then
+        return
+    fi
+
+    local pattern=""
+    for h in "${header_names[@]}"; do
+        local escaped
+        escaped="$(printf '%s' "${h}" | sed 's/\./\\./g')"
+        if [[ -n "${pattern}" ]]; then
+            pattern="${pattern}|${escaped}"
+        else
+            pattern="${escaped}"
+        fi
+    done
+
+    grep -E -r -n -- "#include[[:space:]]+\"(${pattern})\"" "${consumer_dir}" > "${matches_file}" 2>/dev/null || true
+
+    if [[ -s "${matches_file}" ]]; then
+        report_violation "${rule_id}" "${severity}" "${consumer_dir}" "${message}" "${matches_file}"
+    fi
+}
+
+run_checks() {
+    print_banner "Running architecture invariants (blocking severities: ${BLOCKING_SEVERITIES})"
+
+    check_present "INV-H000" "high" "${MATRIX_FILE}" "INV-H001" \
+        "docs/architecture/ARCH_COMPLIANCE_MATRIX.md must exist and contain rule definitions"
+    check_present "INV-H000" "high" "${EXCEPTIONS_FILE}" "ARCH_EXCEPTION" \
+        "docs/architecture/ADR_EXCEPTIONS.md must exist and define exception format"
+
+    check_absent "INV-H001" "high" "components/core" \
+        '#include[[:space:]]+[<"](esp_|freertos/|lwip/|nvs|driver/|soc/|hal/)' \
+        "core layer must stay platform-agnostic (no ESP-IDF/platform headers)"
+
+    check_absent "INV-H002" "high" "components/core" \
+        'malloc[[:space:]]*\(|calloc[[:space:]]*\(|realloc[[:space:]]*\(|free[[:space:]]*\(' \
+        "core layer must not use malloc/calloc/realloc/free"
+    check_absent "INV-H002" "high" "components/service" \
+        'malloc[[:space:]]*\(|calloc[[:space:]]*\(|realloc[[:space:]]*\(|free[[:space:]]*\(' \
+        "service layer must not use malloc/calloc/realloc/free"
+
+    check_absent "INV-H003" "high" "main/app_main.cpp" \
+        'hal_zigbee_poll[[:space:]]*\(|\.process_pending[[:space:]]*\(|\.tick[[:space:]]*\(' \
+        "app_main must be bootstrap-only (no runtime processing loop)"
+    check_present "INV-H003" "high" "main/app_main.cpp" \
+        'g_runtime\.start[[:space:]]*\(' \
+        "app_main must start ServiceRuntime task"
+
+    check_absent "INV-H004" "high" "components" \
+        'kTemporarilyDisable' \
+        "production code must not gate behavior with kTemporarilyDisable* constants; use RuntimeCapabilities/Kconfig instead"
+    check_absent "INV-H004" "high" "main" \
+        'kTemporarilyDisable' \
+        "production code must not gate behavior with kTemporarilyDisable* constants; use RuntimeCapabilities/Kconfig instead"
+
+    check_present "INV-H005" "high" "components/core/include/core_state.hpp" \
+        'DeviceId device_id' \
+        "CoreDeviceRecord must carry a DeviceId field (FD-01: short_addr is a locator, never a durable key)"
+    check_present "INV-H005" "high" "components/core/include/core_events.hpp" \
+        'DeviceId device_id' \
+        "CoreEvent must carry a DeviceId field (FD-01)"
+    check_present "INV-H005" "high" "components/core/include/core_commands.hpp" \
+        'DeviceId device_id' \
+        "CoreCommand must carry a DeviceId field (FD-01)"
+
+    check_absent "INV-M001" "medium" "components/app_hal/hal_wifi.c" \
+        'calloc[[:space:]]*\(|free[[:space:]]*\(' \
+        "hal_wifi scan hot path must not use calloc/free"
+
+    check_absent "INV-M002" "medium" "components/app_hal/hal_zigbee.c" \
+        'is_duplicate_join|maybe_close_permit_join_after_first_join|s_permit_join_auto_closed' \
+        "join dedup/auto-close policy must not live in HAL Zigbee"
+
+    check_present "INV-M003" "medium" "components/service/service_runtime.cpp" \
+        'runtime_task_entry' \
+        "ServiceRuntime runtime task entry must exist"
+    check_present "INV-M003" "medium" "components/service/service_runtime.cpp" \
+        'post_zigbee_join_candidate' \
+        "ServiceRuntime must own join policy ingress API"
+
+    check_present "INV-M004" "medium" "cmake/ProjectCompileOptions.cmake" \
+        '-fno-exceptions' \
+        "compile policy must enforce -fno-exceptions"
+    check_present "INV-M004" "medium" "cmake/ProjectCompileOptions.cmake" \
+        '-fno-rtti' \
+        "compile policy must enforce -fno-rtti"
+    check_present "INV-M004" "medium" "cmake/ProjectCompileOptions.cmake" \
+        '-fno-threadsafe-statics' \
+        "compile policy must enforce -fno-threadsafe-statics"
+    check_present "INV-M004" "medium" "cmake/ProjectCompileOptions.cmake" \
+        '-Werror' \
+        "compile policy must enforce -Werror (warnings as errors)"
+
+    check_absent "INV-M005" "medium" "components/app_hal/include/hal_wifi.h" \
+        '^[[:space:]]*int[[:space:]]+hal_wifi_' \
+        "HAL Wi-Fi API must use typed status return values (no int contract)"
+    check_absent "INV-M005" "medium" "components/app_hal/include/hal_nvs.h" \
+        '^[[:space:]]*int[[:space:]]+hal_nvs_' \
+        "HAL NVS API must use typed status return values (no int contract)"
+    check_present "INV-M005" "medium" "components/app_hal/include/hal_wifi.h" \
+        'HAL_WIFI_STATUS_OK' \
+        "HAL Wi-Fi status enum must be defined in header"
+    check_present "INV-M005" "medium" "components/app_hal/include/hal_nvs.h" \
+        'HAL_NVS_STATUS_OK' \
+        "HAL NVS status enum must be defined in header"
+
+    check_absent "INV-M006" "medium" "components/app_hal/hal_wifi.c" \
+        'scan rejected for mode|STA connect rejected' \
+        "HAL Wi-Fi must not own scan/connect mode policy decisions"
+    check_present "INV-M006" "medium" "components/service/service_runtime.cpp" \
+        'ensure_wifi_mode_for_scan|ensure_wifi_mode_for_sta_connect' \
+        "ServiceRuntime must own Wi-Fi mode policy for scan/connect"
+
+    check_absent "INV-M007" "medium" "components/web_ui/web_handlers_device.cpp" \
+        'pin_current[[:space:]]*\(' \
+        "/api/devices handler must not pin registry directly (use service-owned API snapshot)"
+    check_present "INV-M007" "medium" "components/web_ui/web_handlers_device.cpp" \
+        'build_devices_api_snapshot[[:space:]]*\(' \
+        "/api/devices handler must use ServiceRuntime atomic devices API snapshot"
+
+    check_absent "INV-M008" "medium" "components/app_hal/hal_zigbee.c" \
+        'open_network_or_queue_formation|zigbee_next_formation_retry_ms_|zigbee_formation_retry_count_|pending_join_window_seconds_|join_window_explicit_expected_|zigbee_join_window_was_open_|is_duplicate_join|maybe_auto_close_permit_join_after_first_join|s_permit_join_auto_closed' \
+        "HAL Zigbee must not contain service-owned network/join policy logic"
+    check_present "INV-M008" "medium" "components/service/service_runtime.cpp" \
+        'process_zigbee_network_policy|request_join_window_open|maybe_auto_close_join_window_after_first_join' \
+        "ServiceRuntime must own Zigbee formation/join policy flow"
+
+    check_absent "INV-M010" "medium" "components/app_hal/hal_zigbee.c" \
+        'kAutoRejoin|auto_rejoin|maybe_open_auto_rejoin_window|maybe_request_auto_rejoin_window' \
+        "HAL Zigbee must not contain auto-rejoin policy state/handlers"
+    check_present "INV-M010" "medium" "components/service/network_policy_manager.cpp" \
+        'maybe_request_auto_rejoin_window' \
+        "Service NetworkPolicyManager must own auto-rejoin policy"
+    check_present "INV-M010" "medium" "components/service/service_runtime.cpp" \
+        'maybe_request_auto_rejoin_window' \
+        "ServiceRuntime must trigger auto-rejoin policy via NetworkPolicyManager"
+
+    check_freertos_include_order "INV-M011" "medium" "components/service" \
+        "FreeRTOS include order must be FreeRTOS.h before task.h in Service"
+    check_freertos_include_order "INV-M011" "medium" "components/app_hal" \
+        "FreeRTOS include order must be FreeRTOS.h before task.h in HAL"
+
+    check_absent "INV-M012" "medium" "components/service" \
+        'vTaskDelay[[:space:]]*\([[:space:]]*1[[:space:]]*\)' \
+        "Service spinlock paths must not block via vTaskDelay(1); use taskYIELD/backoff-safe approach"
+
+    check_absent "INV-M013" "medium" "components/web_ui/web_handlers_network.cpp" \
+        'pin_current[[:space:]]*\(' \
+        "web network handler must not pin registry directly"
+    check_absent "INV-M013" "medium" "components/web_ui/web_handlers_config.cpp" \
+        'pin_current[[:space:]]*\(' \
+        "web config handler must not pin registry directly"
+    check_absent "INV-M013" "medium" "components/web_ui/include/web_routes.hpp" \
+        'CoreRegistry' \
+        "web route context must not depend on CoreRegistry"
+    check_present "INV-M013" "medium" "components/web_ui/web_handlers_network.cpp" \
+        'build_network_api_snapshot[[:space:]]*\(' \
+        "web network handler must use ServiceRuntime network snapshot API"
+    check_present "INV-M013" "medium" "components/web_ui/web_handlers_config.cpp" \
+        'build_config_api_snapshot[[:space:]]*\(' \
+        "web config handler must use ServiceRuntime config snapshot API"
+
+    check_absent "INV-M014" "medium" "components/service/include/service_runtime.hpp" \
+        'const[[:space:]]+RuntimeStats&[[:space:]]+stats[[:space:]]*\(' \
+        "ServiceRuntime stats API must return snapshot by value"
+
+    check_absent "INV-M015" "medium" "components/service/include/service_runtime.hpp" \
+        '#include[[:space:]]+"hal_zigbee\.h"|hal_zigbee_' \
+        "public ServiceRuntime header must not expose HAL Zigbee boundary types"
+
+    local manager_registry_reads="${TMP_DIR}/INV-M016.txt"
+    : > "${manager_registry_reads}"
+    while IFS= read -r file; do
+        [[ -n "${file}" ]] || continue
+        grep -E -n -- 'snapshot_copy[[:space:]]*\(|pin_current[[:space:]]*\(' "${file}" >> "${manager_registry_reads}" || true
+    done < <(find components/service -maxdepth 1 -type f -name '*_manager.cpp' | sort)
+    if [[ -s "${manager_registry_reads}" ]]; then
+        report_violation \
+            "INV-M016" \
+            "medium" \
+            "components/service" \
+            "service managers must not read CoreRegistry snapshots directly; consume ServiceRuntime-owned state fragments" \
+            "${manager_registry_reads}"
+    fi
+
+    check_absent "INV-M017" "medium" "components/app_hal/hal_zigbee.c" \
+        'kDiagTarget|DIAG target|should_suppress_on_off_for_diag_target|Suppress On/Off short_addr=.*age_ms' \
+        "HAL Zigbee must not contain hardcoded target-device diagnostics or per-device suppression logic"
+
+    check_absent "INV-M018" "medium" "components/service/include/network_manager.hpp" \
+        'kCredentialsRawDebug|debug_ssid|debug_password|handle_credentials_raw_debug' \
+        "production network service DTO contract must not contain raw credential debug fields or operations"
+    check_absent "INV-M018" "medium" "components/service/include/service_runtime.hpp" \
+        'post_network_credentials_raw_debug' \
+        "ServiceRuntime public API must not expose raw credential debug requests"
+    check_absent "INV-M018" "medium" "components/web_ui/web_handlers_network.cpp" \
+        'credentials_raw_debug|raw-debug' \
+        "web network handler must not expose raw credential debug endpoint in production contract"
+
+    check_absent "INV-M019" "medium" "components/web_ui" \
+        '#include[[:space:]]+"service_runtime\.hpp"' \
+        "web UI must depend on ServiceRuntimeApi facade, not concrete ServiceRuntime header"
+    check_absent "INV-M019" "medium" "components/mqtt_bridge" \
+        '#include[[:space:]]+"service_runtime\.hpp"' \
+        "MQTT bridge must depend on ServiceRuntimeApi facade, not concrete ServiceRuntime header"
+    check_present "INV-M019" "medium" "components/service/include/service_runtime_api.hpp" \
+        'class[[:space:]]+ServiceRuntimeApi' \
+        "service facade header must define ServiceRuntimeApi"
+
+    check_absent "INV-M020" "medium" "components/service/include/service_runtime.hpp" \
+        'SERVICE_RUNTIME_TEST_HOOKS|pop_scan_worker_request_for_test|set_scan_request_in_progress_for_test|clear_scan_request_in_progress_for_test|push_network_result_for_test|monotonic_now_ms_for_test' \
+        "production ServiceRuntime header must not expose macro-gated runtime test hooks"
+    check_present "INV-M020" "medium" "components/service/include/service_runtime_test_access.hpp" \
+        'class[[:space:]]+ServiceRuntimeTestAccess' \
+        "test-only runtime access header must define ServiceRuntimeTestAccess facade"
+
+    check_present "INV-M021" "medium" "main/app_main.cpp" \
+        'g_mqtt\.attach_runtime[[:space:]]*\(&g_runtime\)' \
+        "app_main must attach ServiceRuntime to MQTT bridge before startup"
+    check_present "INV-M021" "medium" "main/app_main.cpp" \
+        'g_mqtt\.start[[:space:]]*\(' \
+        "app_main must start MQTT bridge"
+    check_present "INV-M021" "medium" "components/mqtt_bridge/include/mqtt_bridge.hpp" \
+        'sync_runtime_snapshot[[:space:]]*\(' \
+        "MQTT bridge must expose runtime snapshot feed API"
+
+    check_absent "INV-M022" "medium" "components/service/include/service_runtime_api.hpp" \
+        'virtual[[:space:]]+core::CoreState[[:space:]]+state[[:space:]]*\(|copy_state[[:space:]]*\(' \
+        "ServiceRuntimeApi must not expose raw CoreState snapshot reads to bridge consumers"
+    check_present "INV-M022" "medium" "components/service/include/service_runtime_api.hpp" \
+        'build_mqtt_bridge_snapshot[[:space:]]*\(' \
+        "ServiceRuntimeApi must expose service-owned MQTT bridge snapshot builder"
+    check_absent "INV-M022" "medium" "components/mqtt_bridge" \
+        'sync_snapshot[[:space:]]*\([[:space:]]*const[[:space:]]+core::CoreState&|runtime_->state[[:space:]]*\(|copy_state[[:space:]]*\(' \
+        "MQTT bridge must not consume raw CoreState snapshot reads; it must use service-owned MQTT snapshots"
+
+    check_present "INV-M023" "medium" "components/service/include/service_runtime_api.hpp" \
+        'build_matter_bridge_snapshot[[:space:]]*\(' \
+        "ServiceRuntimeApi must expose service-owned Matter bridge snapshot builder"
+    check_absent "INV-M023" "medium" "components/matter_bridge" \
+        'sync_snapshot[[:space:]]*\([[:space:]]*const[[:space:]]+core::CoreState&|#include[[:space:]]+\"core_state\\.hpp\"' \
+        "Matter bridge must not consume raw CoreState snapshots"
+    check_present "INV-M023" "medium" "main/app_main.cpp" \
+        'g_matter\.attach_runtime[[:space:]]*\(&g_runtime\)' \
+        "app_main must attach ServiceRuntime to Matter bridge"
+    check_present "INV-M023" "medium" "main/app_main.cpp" \
+        'g_matter\.start[[:space:]]*\(' \
+        "app_main must start Matter bridge runtime feed path"
+
+    check_present "INV-M036" "medium" "components/service/include/matter_runtime_api.hpp" \
+        'class[[:space:]]+MatterRuntimeApi' \
+        "service must define a narrow MatterRuntimeApi contract for Matter bridge integration"
+    check_present "INV-M036" "medium" "components/service/include/matter_runtime_api.hpp" \
+        'build_matter_bridge_snapshot[[:space:]]*\(|post_command[[:space:]]*\(|next_operation_request_id[[:space:]]*\(' \
+        "MatterRuntimeApi must expose snapshot feed and command-loop ingress primitives used by Matter bridge"
+    check_present "INV-M036" "medium" "components/service/include/service_runtime_api.hpp" \
+        'class[[:space:]]+ServiceRuntimeApi[[:space:]]*:[[:space:]]*public[[:space:]]+MatterRuntimeApi' \
+        "ServiceRuntimeApi must extend MatterRuntimeApi to keep Matter path on a stable narrow contract"
+    check_present "INV-M036" "medium" "components/matter_bridge/include/matter_bridge.hpp" \
+        '#include[[:space:]]+\"matter_runtime_api\.hpp\"' \
+        "Matter bridge must depend on narrow MatterRuntimeApi contract header"
+    check_absent "INV-M036" "medium" "components/matter_bridge/include/matter_bridge.hpp" \
+        '#include[[:space:]]+\"service_runtime_api\.hpp\"' \
+        "Matter bridge must not include the full ServiceRuntimeApi header directly"
+    check_absent "INV-M036" "medium" "components/matter_bridge/include/matter_bridge.hpp" \
+        'ServiceRuntimeApi' \
+        "Matter bridge public header must not reference full ServiceRuntimeApi type"
+    check_absent "INV-M036" "medium" "components/matter_bridge/matter_bridge.cpp" \
+        '#include[[:space:]]+\"service_runtime_api\.hpp\"|ServiceRuntimeApi' \
+        "Matter bridge implementation must not depend on full ServiceRuntimeApi type/header"
+
+    check_present "INV-M037" "medium" "components/matter_bridge/include/matter_bridge.hpp" \
+        'post_power_command[[:space:]]*\(' \
+        "Matter bridge must expose an explicit command ingress API for power command loop"
+    check_present "INV-M037" "medium" "components/matter_bridge/matter_bridge.cpp" \
+        'CoreCommandType::kSetDevicePower|next_operation_request_id[[:space:]]*\(|post_command[[:space:]]*\(' \
+        "Matter power command ingress must flow through runtime request-id + post_command path"
+    check_absent "INV-M037" "medium" "components/matter_bridge/matter_bridge.cpp" \
+        'CoreEventType::kCommandSetDevicePowerRequested|CoreEvent[[:space:]]+[a-zA-Z_][a-zA-Z0-9_]*[[:space:]]*\\{' \
+        "Matter bridge must not bypass ServiceRuntime command ingress by constructing Core events directly"
+
+    check_present "INV-M038" "medium" "components/matter_bridge/matter_bridge.cpp" \
+        'if[[:space:]]*\([[:space:]]*started\(\)[[:space:]]*\)' \
+        "Matter bridge start path must guard against duplicate start"
+    check_present "INV-M038" "medium" "components/matter_bridge/matter_bridge.cpp" \
+        'return[[:space:]]+true;' \
+        "Matter bridge duplicate-start guard must return success idempotently"
+    check_present "INV-M038" "medium" "components/matter_bridge/matter_bridge.cpp" \
+        'pending_update_count_[[:space:]]*<[[:space:]]*kMatterMaxUpdatesPerSync' \
+        "Matter bridge update queue must remain bounded by kMatterMaxUpdatesPerSync"
+    check_present "INV-M038" "medium" "components/matter_bridge/matter_bridge.cpp" \
+        'xTaskAbortDelay[[:space:]]*\(' \
+        "Matter bridge stop path must wake delayed task to reduce shutdown races and long waits"
+
+    check_present "INV-M039" "medium" "components/matter_bridge/README.md" \
+        'RTTI|exceptions|ADR_EXCEPTIONS' \
+        "Matter bridge module must document local RTTI/exception policy and ADR exception workflow"
+    check_present "INV-M039" "medium" "components/app_hal/hal_matter.c" \
+        'hal_matter_stack_init|hal_matter_stack_publish_attribute_update' \
+        "HAL Matter adapter must expose only thin weak-hook transport extension seam"
+    check_absent "INV-M039" "medium" "components/app_hal/hal_matter.c" \
+        '#include[[:space:]]+\"core_|#include[[:space:]]+\"service_' \
+        "HAL Matter adapter must not depend on Core/Service layer headers"
+    check_absent "INV-M039" "medium" "components/app_hal/hal_matter.c" \
+        'CoreEvent|CoreState|join_window|reporting_state|device_count|short_addr remap' \
+        "HAL Matter adapter must not contain domain lifecycle/policy logic"
+
+    check_absent "INV-M040" "medium" "components/matter_bridge" \
+        'malloc[[:space:]]*\(|calloc[[:space:]]*\(|realloc[[:space:]]*\(|free[[:space:]]*\(|[[:space:]]new[[:space:]]|[[:space:]]delete[[:space:]]' \
+        "Matter bridge runtime path must remain bounded and avoid heap allocations"
+    check_absent "INV-M040" "medium" "components/matter_bridge" \
+        '#include[[:space:]]+\"core_registry\.hpp\"|#include[[:space:]]+\"core_events\.hpp\"|pin_current[[:space:]]*\(|snapshot_copy[[:space:]]*\(|CoreRegistry' \
+        "Matter bridge must not mutate/read CoreRegistry directly (Single Writer boundary)"
+
+    check_present "INV-M024" "medium" "components/service/include/bridge_snapshot_builder.hpp" \
+        'class[[:space:]]+BridgeSnapshotBuilder' \
+        "service bridge snapshot mapping must live in a dedicated helper"
+    check_absent "INV-M024" "medium" "components/service/service_runtime.cpp" \
+        'mqtt_device\.power_on|matter_device\.primary_class' \
+        "bridge-specific DTO field mapping must not live directly in ServiceRuntime"
+
+    check_present "INV-M032" "medium" "components/service/include/read_model_coordinator.hpp" \
+        'class[[:space:]]+ReadModelCoordinator' \
+        "read-model cache/build orchestration must live in ReadModelCoordinator"
+    check_present "INV-M032" "medium" "components/service/include/read_model_coordinator.hpp" \
+        'publish_devices_api_snapshot[[:space:]]*\(|build_devices_api_snapshot[[:space:]]*\([[:space:]]*DevicesApiSnapshot\*' \
+        "ReadModelCoordinator must own cached DevicesApiSnapshot publication and reads"
+    check_present "INV-M032" "medium" "components/service/include/service_runtime.hpp" \
+        'ReadModelCoordinator[[:space:]]+read_model_coordinator_' \
+        "ServiceRuntime must own ReadModelCoordinator as an internal seam"
+    check_present "INV-M032" "medium" "components/service/service_runtime.cpp" \
+        'read_model_coordinator_\.on_core_state_published[[:space:]]*\(|read_model_coordinator_\.on_runtime_stats_changed[[:space:]]*\(|read_model_coordinator_\.on_config_changed[[:space:]]*\(|read_model_coordinator_\.on_mqtt_status_changed[[:space:]]*\(' \
+        "ServiceRuntime must delegate read-model cache/build operations to ReadModelCoordinator"
+    check_absent "INV-M032" "medium" "components/service/service_runtime.cpp" \
+        'sync_api_snapshots|publish_network_api_snapshot|publish_config_api_snapshot' \
+        "ServiceRuntime must not keep legacy inline read-model sync helpers after extracting ReadModelCoordinator policy"
+
+    check_present "INV-M033" "medium" "components/service/include/operation_result_store.hpp" \
+        'class[[:space:]]+OperationResultStore' \
+        "network operation result queueing must live in a dedicated OperationResultStore seam"
+    check_present "INV-M033" "medium" "components/service/include/operation_result_store.hpp" \
+        'publish_config_result[[:space:]]*\(|take_config_result[[:space:]]*\(' \
+        "OperationResultStore must also own config result queueing APIs"
+    check_present "INV-M033" "medium" "components/service/include/service_runtime.hpp" \
+        'OperationResultStore[[:space:]]+operation_result_store_' \
+        "ServiceRuntime must own OperationResultStore as an internal seam"
+    check_present "INV-M033" "medium" "components/service/service_runtime.cpp" \
+        'operation_result_store_\.next_request_id[[:space:]]*\(|operation_result_store_\.publish_network_result[[:space:]]*\(|operation_result_store_\.take_network_result[[:space:]]*\(' \
+        "ServiceRuntime must delegate request-id generation and network result queue operations to OperationResultStore"
+    check_present "INV-M033" "medium" "components/service/include/service_runtime_api.hpp" \
+        'next_operation_request_id[[:space:]]*\(' \
+        "ServiceRuntimeApi must expose service-owned operation request-id allocation"
+    check_present "INV-M033" "medium" "components/service/include/service_runtime_api.hpp" \
+        'get_network_operation_poll_status[[:space:]]*\(' \
+        "ServiceRuntimeApi must expose centralized poll status semantics for async network operations"
+    check_present "INV-M033" "medium" "components/service/include/service_runtime_api.hpp" \
+        'take_config_result[[:space:]]*\(' \
+        "ServiceRuntimeApi must expose service-owned config result reads"
+    check_absent "INV-M033" "medium" "components/service/include/service_runtime.hpp" \
+        'network_result_queue_|network_result_count_' \
+        "network result queue storage must not remain inline inside ServiceRuntime"
+    check_absent "INV-M033" "medium" "components/web_ui/web_handlers_network.cpp" \
+        'is_scan_request_queued[[:space:]]*\(|is_scan_request_in_progress[[:space:]]*\(' \
+        "web network result polling must not stitch together async scan state from multiple runtime helpers"
+
+    check_present "INV-M034" "medium" "components/service/include/zigbee_lifecycle_coordinator.hpp" \
+        'class[[:space:]]+ZigbeeLifecycleCoordinator' \
+        "Zigbee join-window lifecycle concerns must live in a dedicated ZigbeeLifecycleCoordinator seam"
+    check_present "INV-M034" "medium" "components/service/include/service_runtime.hpp" \
+        'ZigbeeLifecycleCoordinator[[:space:]]+zigbee_lifecycle_coordinator_' \
+        "ServiceRuntime must own ZigbeeLifecycleCoordinator as an internal seam"
+    check_present "INV-M034" "medium" "components/service/service_runtime.cpp" \
+        'zigbee_lifecycle_coordinator_\.request_join_window_open[[:space:]]*\(|zigbee_lifecycle_coordinator_\.process_join_window_policy[[:space:]]*\(|zigbee_lifecycle_coordinator_\.handle_join_candidate[[:space:]]*\(|zigbee_lifecycle_coordinator_\.process_force_remove_timeouts[[:space:]]*\(' \
+        "ServiceRuntime must delegate join-window, duplicate-join, and force-remove lifecycle operations to ZigbeeLifecycleCoordinator"
+    check_absent "INV-M034" "medium" "components/service/include/service_runtime.hpp" \
+        'join_window_open_cache_|join_window_seconds_left_cache_|is_duplicate_join_candidate[[:space:]]*\(' \
+        "join-window cache storage and duplicate-join helper must not remain inline inside ServiceRuntime"
+    check_absent "INV-M034" "medium" "components/service/service_runtime.cpp" \
+        'ServiceRuntime::process_force_remove_timeouts[[:space:]]*\(' \
+        "force-remove timeout lifecycle policy must not remain inline inside ServiceRuntime"
+    check_absent "INV-M034" "medium" "components/service/network_manager.cpp" \
+        'hal_zigbee_remove_device[[:space:]]*\(' \
+        "remove-device Zigbee lifecycle policy must not remain inline inside NetworkManager"
+
+    check_present "INV-M035" "medium" "components/service/include/state_persistence_coordinator.hpp" \
+        'class[[:space:]]+StatePersistenceCoordinator' \
+        "persist/restore core-state lifecycle must live in a dedicated StatePersistenceCoordinator seam"
+    check_present "INV-M035" "medium" "components/service/include/service_runtime.hpp" \
+        'StatePersistenceCoordinator[[:space:]]+state_persistence_coordinator_' \
+        "ServiceRuntime must own StatePersistenceCoordinator as an internal seam"
+    check_present "INV-M035" "medium" "components/service/service_runtime.cpp" \
+        'state_persistence_coordinator_\.persist_current_core_state[[:space:]]*\(|state_persistence_coordinator_\.restore_persisted_core_state[[:space:]]*\(|state_persistence_coordinator_\.note_persist_state_requested[[:space:]]*\(|state_persistence_coordinator_\.flush_if_needed[[:space:]]*\(' \
+        "ServiceRuntime must delegate core-state persist/restore and scheduling operations to StatePersistenceCoordinator"
+    check_absent "INV-M035" "medium" "components/service/include/service_runtime.hpp" \
+        'persisted_core_state_storage_|restore_core_state_pending_' \
+        "persisted core-state storage and restore-pending flag must not remain inline inside ServiceRuntime"
+
+    check_absent "INV-M025" "medium" "components/app_hal/include/hal_zigbee.h" \
+        'hal_zigbee_test_apply_permit_join_status|hal_zigbee_notify_|hal_zigbee_simulate_|SERVICE_RUNTIME_TEST_HOOKS' \
+        "production HAL Zigbee header must not expose test-only hooks or simulation APIs"
+    check_present "INV-M025" "medium" "components/app_hal/include/hal_zigbee_test.h" \
+        'hal_zigbee_test_apply_permit_join_status|hal_zigbee_notify_|hal_zigbee_simulate_' \
+        "test-only HAL Zigbee access must live in a dedicated test header"
+
+    check_present "INV-M026" "medium" "components/app_hal/hal_mqtt.c" \
+        '#include[[:space:]]+"mqtt_client\.h"|esp_mqtt_client_' \
+        "HAL MQTT adapter must own ESP-IDF MQTT client integration"
+    check_absent "INV-M026" "medium" "components/app_hal/hal_mqtt.c" \
+        'CONFIG_ZGW_MQTT_KEEPALIVE_SEC|CONFIG_ZGW_MQTT_NETWORK_TIMEOUT_MS|CONFIG_ZGW_MQTT_RECONNECT_TIMEOUT_MS' \
+        "HAL MQTT adapter must receive transport tunables from caller config, not own Kconfig policy"
+    check_absent "INV-M026" "medium" "components/mqtt_bridge" \
+        '#include[[:space:]]+"mqtt_client\.h"|esp_mqtt_client_' \
+        "MQTT bridge must not use ESP-IDF MQTT client directly"
+    check_absent "INV-M026" "medium" "components/service" \
+        '#include[[:space:]]+"mqtt_client\.h"|esp_mqtt_client_' \
+        "service layer must not use ESP-IDF MQTT client directly"
+    check_absent "INV-M026" "medium" "components/mqtt_bridge" \
+        '#include[[:space:]]+"core_[^"]+\.hpp"|core::' \
+        "MQTT bridge adapters must not depend on core headers or core symbols directly"
+    check_present "INV-M026" "medium" "components/mqtt_bridge/mqtt_bridge.cpp" \
+        'hal_mqtt_config_t[[:space:]]+transport_config|hal_mqtt_init[[:space:]]*\(&transport_config\)' \
+        "MQTT bridge must assemble transport policy and pass it into HAL"
+    check_absent "INV-M026" "medium" "components/app_hal/hal_ota.c" \
+        'CONFIG_ZGW_OTA_TLS_TRUST_|CONFIG_ZGW_OTA_ALLOW_HTTP_URLS_FOR_TESTING' \
+        "HAL OTA adapter must not own OTA trust or HTTP policy directly"
+    check_present "INV-M026" "medium" "components/service/ota_transport_policy.cpp" \
+        'CONFIG_ZGW_OTA_TLS_TRUST_|CONFIG_ZGW_OTA_ALLOW_HTTP_URLS_FOR_TESTING' \
+        "service-owned OTA transport policy must resolve trust and HTTP settings before calling HAL"
+    check_absent "INV-M026" "medium" "components/app_hal/hal_rcp.c" \
+        'CONFIG_ZGW_OTA_TLS_TRUST_|CONFIG_ZGW_OTA_ALLOW_HTTP_URLS_FOR_TESTING' \
+        "HAL RCP adapter must not own OTA trust or HTTP policy directly"
+    check_present "INV-M026" "medium" "components/service/rcp_transport_policy.cpp" \
+        'CONFIG_ZGW_OTA_TLS_TRUST_|CONFIG_ZGW_OTA_ALLOW_HTTP_URLS_FOR_TESTING' \
+        "service-owned RCP transport policy must resolve trust and HTTP settings before calling HAL"
+
+    check_present "INV-M027" "medium" "components/service/include/service_runtime_api.hpp" \
+        'struct[[:space:]]+MqttStatusSnapshot' \
+        "service runtime facade must define MQTT status snapshot DTO"
+    check_present "INV-M027" "medium" "components/service/include/service_runtime_api.hpp" \
+        'MqttStatusSnapshot[[:space:]]+mqtt' \
+        "network API snapshot must embed service-owned MQTT status read model"
+    check_absent "INV-M027" "medium" "components/web_ui" \
+        '#include[[:space:]]+"hal_mqtt\.h"|#include[[:space:]]+"mqtt_bridge\.hpp"' \
+        "web UI must consume MQTT status via service-owned network snapshot, not transport or bridge headers"
+
+    check_absent "INV-M028" "medium" "components/mqtt_bridge/include/mqtt_bridge.hpp" \
+        'MQTT_BRIDGE_TEST_HOOKS' \
+        "production MQTT bridge header must not expose macro-gated test hooks"
+    check_present "INV-M028" "medium" "components/mqtt_bridge/include/mqtt_bridge_test_access.hpp" \
+        'class[[:space:]]+MqttBridgeTestAccess' \
+        "test-only MQTT bridge access must live in a dedicated test access header"
+
+    check_absent "INV-M029" "medium" "components/core" \
+        'homeassistant/' \
+        "Home Assistant discovery specifics must not leak into core"
+    check_absent "INV-M029" "medium" "components/service" \
+        'homeassistant/' \
+        "Home Assistant discovery specifics must not leak into service"
+    check_absent "INV-M029" "medium" "components/web_ui" \
+        'homeassistant/' \
+        "Home Assistant discovery specifics must not leak into web UI"
+    check_present "INV-M029" "medium" "components/mqtt_bridge/mqtt_discovery.cpp" \
+        'kDiscoveryPrefix|build_discovery_topic' \
+        "Home Assistant discovery topic contract must live in MQTT bridge discovery layer"
+
+    check_absent "INV-M030" "medium" "components/service/include/service_runtime_api.hpp" \
+        'core::CoreState[[:space:]]+state[[:space:]]*\{' \
+        "devices API snapshot must not expose raw CoreState in the service facade"
+    check_absent "INV-M030" "medium" "components/web_ui/web_handlers_device.cpp" \
+        '#include[[:space:]]+"core_state\.hpp"|devices_snapshot\.state|state\.devices|core::CoreReportingState|core::CoreOccupancyState|core::CoreContactState' \
+        "web devices handler must consume service-owned device DTOs, not raw core state layout"
+    check_present "INV-M030" "medium" "components/service/include/service_runtime_api.hpp" \
+        'struct[[:space:]]+DevicesApiDeviceSnapshot' \
+        "service facade must define a service-owned device DTO for /api/devices"
+    check_absent "INV-M030" "medium" "components/web_ui" \
+        '#include[[:space:]]+"core_[^"]+\.hpp"|core::' \
+        "web UI adapters must not depend on core headers or core symbols directly"
+
+    check_present "INV-M031" "medium" "components/service/include/devices_api_snapshot_builder.hpp" \
+        'class[[:space:]]+DevicesApiSnapshotBuilder' \
+        "devices API DTO mapping must live in a dedicated service helper"
+    check_present "INV-M031" "medium" "components/service/service_runtime.cpp" \
+        'read_model_coordinator_\.build_devices_api_snapshot[[:space:]]*\(' \
+        "ServiceRuntime must delegate /api/devices DTO mapping through the read-model seam"
+    check_absent "INV-M031" "medium" "components/service/service_runtime.cpp" \
+        'api_device\.reporting_state|api_device\.occupancy_state|api_device\.contact_state|api_device\.battery_percent|api_device\.lqi|api_device\.rssi_dbm' \
+        "device API DTO field mapping must not live directly in ServiceRuntime"
+
+    check_present "INV-M009" "medium" ".github/workflows/ci.yml" \
+        '^  reporting-regression:' \
+        "CI workflow must define reporting-regression blocking job"
+    check_present "INV-M009" "medium" ".github/workflows/ci.yml" \
+        'test_service_reporting_manager' \
+        "reporting-regression must run dedicated reporting lifecycle tests"
+
+    check_no_cross_include "INV-M041" "medium" "components/app_hal" "components/service/include" \
+        "app_hal must not depend on service layer headers (upward dependency violation)"
+
+    check_no_cross_include "INV-M042" "medium" "components/core" "components/service/include" \
+        "core must not depend on service layer headers (upward dependency violation)"
+
+    check_absent "INV-M043" "medium" "components/core" \
+        '#include[[:space:]]+"hal_[^"]+\.h"' \
+        "core must not depend on HAL layer headers (upward dependency violation)"
+
+    local m044_file="${TMP_DIR}/INV-M044.txt"
+    grep -E -r -n --include='*.cpp' --include='*.hpp' --include='*.h' --include='*.c' \
+        -- '#include[[:space:]]+"core_[^"]+\.hpp"|core::' \
+        "components/matter_bridge" > "${m044_file}" 2>/dev/null || true
+    if [[ -s "${m044_file}" ]]; then
+        report_violation "INV-M044" "medium" "components/matter_bridge" \
+            "Matter bridge must not depend on core headers or core symbols directly" \
+            "${m044_file}"
+    fi
+
+    local m045_file="${TMP_DIR}/INV-M045.txt"
+    grep -E -r -n --include='*.cpp' --include='*.hpp' \
+        -- '#include[[:space:]]+"core_[^"]+\.hpp"|core::' \
+        "components/service" | grep -E '/tuya_' > "${m045_file}" 2>/dev/null || true
+    if [[ -s "${m045_file}" ]]; then
+        report_violation "INV-M045" "medium" "components/service (tuya)" \
+            "Tuya subsystem must not depend on core headers or core symbols directly" \
+            "${m045_file}"
+    fi
+
+    check_present "INV-L001" "low" "components/common/include/log_tags.h" \
+        'LOG_TAG_SERVICE_RUNTIME' \
+        "log tag registry should include ServiceRuntime tag"
+    check_present "INV-L001" "low" "components/common/include/log_tags.h" \
+        'LOG_TAG_HAL_ZIGBEE' \
+        "log tag registry should include HAL Zigbee tag"
+}
+
+print_summary_and_exit() {
+    print_banner "Summary: high=${HIGH_COUNT}, medium=${MEDIUM_COUNT}, low=${LOW_COUNT}, suppressed=${SUPPRESSED_COUNT}"
+
+    if [[ "${HIGH_COUNT}" -gt 0 ]] && is_blocking_severity "high"; then
+        print_banner "FAILED: high severity violations are blocking"
+        exit 1
+    fi
+    if [[ "${MEDIUM_COUNT}" -gt 0 ]] && is_blocking_severity "medium"; then
+        print_banner "FAILED: medium severity violations are blocking"
+        exit 1
+    fi
+    if [[ "${LOW_COUNT}" -gt 0 ]] && is_blocking_severity "low"; then
+        print_banner "FAILED: low severity violations are blocking"
+        exit 1
+    fi
+
+    print_banner "PASSED"
+}
+
+load_exceptions
+run_checks
+print_summary_and_exit

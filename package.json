@@ -1,0 +1,1 @@
+{"name":"zigbeerubi-ui-tests","private":true,"type":"module","scripts":{"test":"node --test test/ui/*.test.mjs"},"devDependencies":{"jsdom":"26.1.0"}}

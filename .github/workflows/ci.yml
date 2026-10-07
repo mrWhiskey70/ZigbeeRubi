@@ -1,0 +1,53 @@
+name: ZigbeeRubi checks
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  reporting-regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: cmake -S test/host -B build-host && cmake --build build-host -j2
+      - run: ctest --test-dir build-host --output-on-failure
+      - run: ctest --test-dir build-host -R test_service_reporting_manager --output-on-failure
+      - run: cmake -S test/integration -B build-integration && cmake --build build-integration -j2 && ctest --test-dir build-integration --output-on-failure
+      - run: cmake -S host -B build-simulator && cmake --build build-simulator -j2
+      - run: ctest --test-dir build-simulator --output-on-failure && python3 -m unittest discover -s test/host_sim -v
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: npm ci && npm test
+      - run: python3 test/scenarios/test_partition_layout.py
+      - run: bash check_arch_invariants.sh
+  firmware:
+    runs-on: ubuntu-latest
+    container: espressif/idf:v5.5.2
+    steps:
+      - uses: actions/checkout@v4
+      - shell: bash
+        run: |
+          . /opt/esp/idf/export.sh
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          idf.py set-target esp32c6
+          idf.py build
+      - run: bash scripts/check_ota_slot_size.sh build partitions.csv
+      - shell: bash
+        run: |
+          . /opt/esp/idf/export.sh
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          python3 tools/write_build_manifest.py build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: esp32-c6-16mb-prototype
+          if-no-files-found: error
+          path: |
+            build/zigbee_gateway.bin
+            build/bootloader/bootloader.bin
+            build/partition_table/partition-table.bin
+            build/ota_data_initial.bin
+            build/flash_args
+            docs/build-manifest.json
+            docs/hardware-first-run.md
+            docs/firmware-artifact.md
+            README_RU.md
+            LICENSE

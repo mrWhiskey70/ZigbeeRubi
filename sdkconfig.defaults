@@ -1,0 +1,4 @@
+# Local standalone prototype; optional bridges disabled by default.
+# CONFIG_ZGW_MQTT_TRANSPORT_ENABLED is not set
+# CONFIG_ZGW_MATTER_ENABLED is not set
+CONFIG_HTTPD_MAX_REQ_HDR_LEN=1024

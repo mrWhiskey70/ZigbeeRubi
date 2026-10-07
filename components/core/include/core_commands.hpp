@@ -1,0 +1,78 @@
+/* SPDX-License-Identifier: AGPL-3.0-only */
+/* Copyright (C) 2026 Alex.K. */
+
+#pragma once
+
+#include <array>
+#include <cstddef>
+#include <cstdint>
+
+#include "core_errors.hpp"
+#include "core_events.hpp"
+
+namespace core {
+
+enum class CoreCommandType : uint8_t {
+    kUnknown = 0,
+    kSetDevicePower,
+    kRefreshNetwork,
+    kUpdateReportingProfile,
+};
+
+struct CoreCommand {
+    CoreCommandType type{CoreCommandType::kUnknown};
+    uint32_t correlation_id{kNoCorrelationId};
+    // Authoritative durable identity (FD-01); device_short_addr below is only
+    // the locator resolved immediately before HAL dispatch.
+    DeviceId device_id{};
+    uint16_t device_short_addr{kUnknownDeviceShortAddr};
+    bool desired_power_on{false};
+    uint32_t issued_at_ms{0};
+    uint8_t reporting_endpoint{0};
+    uint16_t reporting_cluster_id{0};
+    uint16_t reporting_min_interval_seconds{0};
+    uint16_t reporting_max_interval_seconds{0};
+    uint32_t reporting_reportable_change{0};
+    uint8_t reporting_capability_flags{0};
+    uint8_t endpoint{1};
+    bool native_channel{false};
+};
+
+enum class CoreCommandResultType : uint8_t {
+    kSuccess = 0,
+    kTimeout,
+    kFailed,
+};
+
+struct CoreCommandResult {
+    uint32_t correlation_id{kNoCorrelationId};
+    CoreCommandResultType type{CoreCommandResultType::kFailed};
+    uint32_t completed_at_ms{0};
+};
+
+class CoreCommandDispatcher {
+public:
+    static constexpr std::size_t kMaxPending = 16;
+
+    CoreError submit(const CoreCommand& command, CoreEvent* request_event_out) noexcept;
+    CoreError resolve(const CoreCommandResult& result, CoreEvent* completion_event_out) noexcept;
+    std::size_t expire_timeouts(
+        uint32_t now_ms,
+        uint32_t timeout_ms,
+        CoreEvent* events_out,
+        std::size_t events_capacity) noexcept;
+    std::size_t pending_count() const noexcept;
+
+private:
+    struct PendingEntry {
+        bool in_use{false};
+        CoreCommand command{};
+    };
+
+    std::array<PendingEntry, kMaxPending> pending_{};
+    std::size_t pending_count_{0};
+};
+
+CoreEvent command_to_event(const CoreCommand& command) noexcept;
+
+}  // namespace core

@@ -1,0 +1,70 @@
+#include "condition_evaluator.hpp"
+#include "scenario_validation.hpp"
+#include "test_support.hpp"
+int main() {
+  DeviceModel m;
+  fixtures(m);
+  EventBatch e;
+  ClockState c;
+  Scenario r = rule();
+  r.node_count = 3;
+  r.nodes[0].kind = NodeKind::All;
+  r.nodes[0].child_count = 2;
+  r.nodes[0].children[0] = 1;
+  r.nodes[0].children[1] = 2;
+  r.nodes[1].device_id = did(1);
+  r.nodes[2].device_id = did(2);
+  r.nodes[2].capability = Capability::Occupancy;
+  report(m, did(1), Capability::Contact, true, 0, e);
+  CHECK(evaluate_condition(r, 0, m, c) == Truth::Unknown);
+  report(m, did(1), Capability::Contact, false, 0, e);
+  CHECK(evaluate_condition(r, 0, m, c) == Truth::False);
+  r.nodes[0].kind = NodeKind::Any;
+  CHECK(evaluate_condition(r, 0, m, c) == Truth::Unknown);
+  report(m, did(1), Capability::Contact, true, 0, e);
+  CHECK(evaluate_condition(r, 0, m, c) == Truth::True);
+  report(m, did(2), Capability::Occupancy, true, 0, e);
+  r.nodes[0].kind = NodeKind::All;
+  CHECK(evaluate_condition(r, 0, m, c) == Truth::True);
+  m.mark_unavailable(did(2));
+  CHECK(evaluate_condition(r, 0, m, c) == Truth::Unknown);
+  r.node_count = 1;
+  r.nodes[0] = {};
+  r.nodes[0].kind = NodeKind::TimeWindow;
+  r.nodes[0].start_minute = 1380;
+  r.nodes[0].end_minute = 120;
+  CHECK(evaluate_condition(r, 0, m, c) == Truth::Unknown);
+  c.wall_known = true;
+  c.utc_seconds = 18 * 3600;
+  CHECK(evaluate_condition(r, 0, m, c) == Truth::True);
+  c.utc_seconds = 5 * 3600;
+  CHECK(evaluate_condition(r, 0, m, c) == Truth::False);
+  c.utc_seconds = 19 * 3600;
+  CHECK(evaluate_condition(r, 0, m, c) == Truth::False);
+  c.utc_seconds = 16 * 3600;
+  CHECK(evaluate_condition(r, 0, m, c) == Truth::True);
+  r.nodes[0].end_minute = 1380;
+  CHECK(evaluate_condition(r, 0, m, c) == Truth::True);
+  CHECK(matches_trigger(r, {did(2), EventKind::OccupancyDetected, true, 0, 1}));
+  CHECK(!matches_trigger(r, {did(1), EventKind::ContactOpened, true, 0, 2}));
+  // Nested All(Any(contact,motion), time) at 01:00 Tomsk.
+  r.node_count = 5;
+  r.nodes = {};
+  r.nodes[0].kind = NodeKind::All;
+  r.nodes[0].child_count = 2;
+  r.nodes[0].children[0] = 1;
+  r.nodes[0].children[1] = 4;
+  r.nodes[1].kind = NodeKind::Any;
+  r.nodes[1].child_count = 2;
+  r.nodes[1].children[0] = 2;
+  r.nodes[1].children[1] = 3;
+  r.nodes[2].device_id = did(1);
+  r.nodes[3].device_id = did(2);
+  r.nodes[3].capability = Capability::Occupancy;
+  r.nodes[4].kind = NodeKind::TimeWindow;
+  r.nodes[4].start_minute = 1380;
+  r.nodes[4].end_minute = 120;
+  c.utc_seconds = 18 * 3600;
+  CHECK(validate_scenario(r, m));
+  CHECK(evaluate_condition(r, 0, m, c) == Truth::True);
+}
