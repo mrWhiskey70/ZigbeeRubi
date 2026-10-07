@@ -30,3 +30,22 @@ jobs:
           idf.py set-target esp32c6
           idf.py build
       - run: bash scripts/check_ota_slot_size.sh build partitions.csv
+      - shell: bash
+        run: |
+          . /opt/esp/idf/export.sh
+          python3 tools/write_build_manifest.py build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: esp32-c6-16mb-prototype
+          if-no-files-found: error
+          path: |
+            build/zigbee_gateway.bin
+            build/bootloader/bootloader.bin
+            build/partition_table/partition-table.bin
+            build/ota_data_initial.bin
+            build/flash_args
+            docs/build-manifest.json
+            docs/hardware-first-run.md
+            docs/firmware-artifact.md
+            README_RU.md
+            LICENSE

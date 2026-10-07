@@ -23,6 +23,8 @@ bash scripts/run_simulator.sh
 
 Настройки сохраняются в `.sim-data`. Для отдельного стенда: `bash scripts/run_simulator.sh --data-dir /tmp/rubi-demo --port 8081`. Детерминированный режим для тестов: `--virtual-time`; время меняется только через панель/API. Без этого флага есть реальный тик каждые100мс.
 
+Готовые сборки после успешного CI доступны в GitHub Actions: [скачивание и прошивка](docs/firmware-artifact.md).
+
 ## Сборка прошивки C6 / 16МБ
 
 Установите **ESP-IDF v5.5.2**, инструменты `esp32c6` и активируйте `export.sh`. Flash16МБ указана в профиле, **PSRAM не требуется**. Версии библиотек фиксирует `dependencies.lock`.

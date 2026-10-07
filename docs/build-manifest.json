@@ -32,5 +32,8 @@
       "sha256": "7d2c7ac4888bfd75cd5f56e8d61f69595121183afc81556c876732fd3782c62f"
     }
   },
-  "source_content_sha256": "c5b0c7a32db2e9cee5122c826647b3fb2857c39e61fd47e98489703eccb9aae0"
+  "source_content_sha256": "c5b0c7a32db2e9cee5122c826647b3fb2857c39e61fd47e98489703eccb9aae0",
+  "repository_source_commit": "585bede48bde00a7af8b3ee10dc07aa5fc7bb2c0",
+  "repository_source_tree": "e59807dbd5c8878e86a4d2489b01049fbcdf94ac",
+  "provenance_note": "Published repository tree was verified identical to the local checkout. source_commit identifies the local build checkout; repository_source_commit is the reachable GitHub snapshot with identical product source_content_sha256."
 }
