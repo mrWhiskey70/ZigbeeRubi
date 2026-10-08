@@ -2,3 +2,5 @@
 # CONFIG_ZGW_MQTT_TRANSPORT_ENABLED is not set
 # CONFIG_ZGW_MATTER_ENABLED is not set
 CONFIG_HTTPD_MAX_REQ_HDR_LEN=1024
+# Запас стека main task: app_main создаёт HubRuntime и читает NVS до старта сервисной задачи.
+CONFIG_ESP_MAIN_TASK_STACK_SIZE=8192

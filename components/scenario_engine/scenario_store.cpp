@@ -118,7 +118,9 @@ ValidationResult ScenarioStore::load(ScenarioSet &out) noexcept {
   if (!c.generation) {
     if (c.any)
       return {ErrorCode::Storage};
-    out = {};
+    // Без временного ScenarioSet{}: он ~30 КБ и на чистой NVS переполнял стек
+    // main task ESP32-C6 (3,5 КБ) при первом запуске.
+    out.size = 0;
     return {};
   }
   return deserialize(c.payload, out);
