@@ -225,6 +225,25 @@ esp_err_t simulator_panel_js_get_handler(httpd_req_t *req) {
                             simulator_panel_js_gz_end);
 }
 
+// Установка на экран «Домой»: манифест веб-приложения и иконка 180×180 для iOS.
+// Имена символов задаёт target_add_binary_data: точка и дефис в имени файла становятся «_».
+extern const uint8_t manifest_webmanifest_gz_start[] asm(
+    "_binary_manifest_webmanifest_gz_start");
+extern const uint8_t
+    manifest_webmanifest_gz_end[] asm("_binary_manifest_webmanifest_gz_end");
+esp_err_t manifest_get_handler(httpd_req_t *req) {
+  return send_embedded_file(req, "application/manifest+json; charset=utf-8",
+                            "no-store, max-age=0",
+                            manifest_webmanifest_gz_start,
+                            manifest_webmanifest_gz_end);
+}
+extern const uint8_t icon_180_png_gz_start[] asm("_binary_icon_180_png_gz_start");
+extern const uint8_t icon_180_png_gz_end[] asm("_binary_icon_180_png_gz_end");
+esp_err_t icon_180_get_handler(httpd_req_t *req) {
+  return send_embedded_file(req, "image/png", "public, max-age=86400",
+                            icon_180_png_gz_start, icon_180_png_gz_end);
+}
+
 esp_err_t favicon_get_handler(httpd_req_t *req) {
   if (req == nullptr) {
     return ESP_FAIL;
@@ -325,6 +344,20 @@ bool register_static_routes(void *server_handle,
   simulator_panel_uri.handler = simulator_panel_js_get_handler;
   simulator_panel_uri.user_ctx = context;
   if (httpd_register_uri_handler(handle, &simulator_panel_uri) != ESP_OK)
+    return false;
+  httpd_uri_t manifest_uri{};
+  manifest_uri.uri = "/manifest.webmanifest";
+  manifest_uri.method = HTTP_GET;
+  manifest_uri.handler = manifest_get_handler;
+  manifest_uri.user_ctx = context;
+  if (httpd_register_uri_handler(handle, &manifest_uri) != ESP_OK)
+    return false;
+  httpd_uri_t icon_uri{};
+  icon_uri.uri = "/icon-180.png";
+  icon_uri.method = HTTP_GET;
+  icon_uri.handler = icon_180_get_handler;
+  icon_uri.user_ctx = context;
+  if (httpd_register_uri_handler(handle, &icon_uri) != ESP_OK)
     return false;
   return true;
 }

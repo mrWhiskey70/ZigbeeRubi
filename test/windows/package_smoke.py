@@ -15,9 +15,9 @@ def session(command, env, first, virtual=True):
             payload=None if body is None else json.dumps(body).encode('utf-8')
             request=urllib.request.Request(url+path,data=payload,method=method,headers={'Content-Type':'application/json'})
             with urllib.request.urlopen(request,timeout=10) as r:return r.status,json.loads(r.read())
-        for name in ['', 'app.js','api.js','scenario_editor.js','devices_view.js','journal_view.js','simulator_panel.js','style.css']:
+        for name in ['', 'app.js','api.js','scenario_editor.js','devices_view.js','journal_view.js','simulator_panel.js','style.css','manifest.webmanifest','icon-180.png']:
             with urllib.request.urlopen(url+'/'+name,timeout=10) as r:
-                expected='text/javascript' if name.endswith('.js') else 'text/css' if name.endswith('.css') else 'text/html'
+                expected='text/javascript' if name.endswith('.js') else 'text/css' if name.endswith('.css') else 'application/manifest+json' if name.endswith('.webmanifest') else 'image/png' if name.endswith('.png') else 'text/html'
                 assert r.headers.get_content_type()==expected
                 assert r.status==200 and len(r.read())>0
         assert call('/api/v1/system')[1]['mode']=='simulator'

@@ -32,6 +32,8 @@ asm(".global _binary_api_js_gz_start\n_binary_api_js_gz_start:\n.ascii \"module\
 asm(".global _binary_scenario_editor_js_gz_start\n_binary_scenario_editor_js_gz_start:\n.ascii \"module\"\n.global _binary_scenario_editor_js_gz_end\n_binary_scenario_editor_js_gz_end:\n");
 asm(".global _binary_devices_view_js_gz_start\n_binary_devices_view_js_gz_start:\n.ascii \"module\"\n.global _binary_devices_view_js_gz_end\n_binary_devices_view_js_gz_end:\n");
 asm(".global _binary_journal_view_js_gz_start\n_binary_journal_view_js_gz_start:\n.ascii \"module\"\n.global _binary_journal_view_js_gz_end\n_binary_journal_view_js_gz_end:\n");
+asm(".global _binary_manifest_webmanifest_gz_start\n_binary_manifest_webmanifest_gz_start:\n.ascii \"{}\"\n.global _binary_manifest_webmanifest_gz_end\n_binary_manifest_webmanifest_gz_end:\n");
+asm(".global _binary_icon_180_png_gz_start\n_binary_icon_180_png_gz_start:\n.ascii \"png\"\n.global _binary_icon_180_png_gz_end\n_binary_icon_180_png_gz_end:\n");
 asm(".global _binary_simulator_panel_js_gz_start\n_binary_simulator_panel_js_gz_start:\n.ascii \"module\"\n.global _binary_simulator_panel_js_gz_end\n_binary_simulator_panel_js_gz_end:\n");
 }
 
@@ -190,7 +192,7 @@ int main() {
     g_register_fail_at = 0;
     assert(web_ui::register_static_routes(reinterpret_cast<void*>(1), &context));
     const int success_registration_count = g_register_call_count;
-    assert(success_registration_count == 10);
+    assert(success_registration_count == 12);
 
     for (int fail_at = 1; fail_at <= success_registration_count; ++fail_at) {
         g_register_call_count = 0;
